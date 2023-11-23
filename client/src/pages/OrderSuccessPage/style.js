@@ -127,48 +127,51 @@ export const WrapperRightSuccess = styled.div`
     max-height: 250px; 
     overflow-y: auto;
 
-    .order-package-header {
+    .order-header {
         font-size: 14px;
         line-height: 20px;
         padding: 12px 16px;
         font-weight: 500;
         display : flex;
         justify-content: space-between;
+
+        &__title {
+            color: rgb(56, 56, 61);
+        }
+    
+        &__link {
+            color: rgb(11, 116, 229);
+        }
     }
 
-    .order-package-header__title {
-        color: rgb(56, 56, 61);
-    }
 
-    .order-package-header__link {
-        color: rgb(11, 116, 229);
-    }
-
-    .order-package-divider {
+    .order-divider {
         border-bottom: 1px solid rgb(235, 235, 240);
     }
 
-    .order-package-body {
+    .order-body {
         padding: 8px 16px 20px;
         font-size: 14px;
         line-height: 20px;
+
+        &__item{
+            display:flex;
+            align-items: center;
+            margin-bottom: 12px;
+
+            &--image{
+                max-height: 48px;
+            }
+        
+            &--name {
+                margin-left : 7px;
+                color: rgb(128, 128, 137);
+                font-size: 14px;
+                line-height: 20px;
+            }
+        }
+    
     }
 
-    .order-package-body__item{
-        display:flex;
-        align-items: center;
-        margin-bottom: 12px;
-    }
-
-    .item__image{
-        max-height: 48px;
-    }
-
-    .item__name {
-        margin-left : 7px;
-        color: rgb(128, 128, 137);
-        font-size: 14px;
-        line-height: 20px;
-    }
 
 `

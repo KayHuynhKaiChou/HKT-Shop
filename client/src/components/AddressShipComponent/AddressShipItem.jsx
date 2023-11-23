@@ -20,13 +20,13 @@ export default function AddressShipItem(props) {
     } = props
     const location = useLocation();
     const renderBtn = () => {
-        if(location.pathname === '/order/payment'){
+        if(location.pathname === '/cart/payment'){
             return (
                 <Button 
                     type='primary' 
                     className={isDefault ? `btn-address__default` : `btn-address`}
                     onClick={() => setAddressShipSelect && setAddressShipSelect({
-                        id,
+                        _id : id,
                         fullName,
                         phone,
                         province,
@@ -72,7 +72,7 @@ export default function AddressShipItem(props) {
         <div 
             className="address-ship" 
             style={{ 
-                display: location.pathname === '/order/payment' ? 'block' : 'flex' ,
+                display: location.pathname === '/cart/payment' ? 'block' : 'flex' ,
                 border: isDefault ? '1px dashed rgb(38, 188, 78)' : '1px solid #c4c4c4'
             }}
         >
@@ -92,7 +92,7 @@ export default function AddressShipItem(props) {
                 </div>
                 <div className="phone">
                     <span>Phone: </span>
-                    {phone.replace('+84', '0')}
+                    {phone}
                 </div>
             </div>
             <div className="action">

@@ -7,8 +7,8 @@ export default function LineChartComponent({statisticTypeProduct = []}) {
   const data = statisticTypeProduct?.map(products => {
     return {
       type: products.type,
-      ['đã bán']: products.numberSold,
-      ['tồn kho']: products.numberStock
+      ['đã bán']: products.totalSoldNum,
+      ['tồn kho']: products.totalInStockNum
     }
   })
 

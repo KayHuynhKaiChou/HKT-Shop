@@ -5,7 +5,7 @@ import orderUnpaidRouter from "./orderUnpaidRouter.js";
 import paymentRouter from "./paymentRouter.js";
 import voucherRouter from "./voucherRouter.js";
 import addressShipRouter from "./addressShipRouter.js";
-
+import dashboardRouter from "./dashboardRouter.js";
 
 export const routes = (app) => {
     app.use('/api/user', userRouter)
@@ -15,4 +15,5 @@ export const routes = (app) => {
     app.use('/api/payment', paymentRouter)
     app.use('/api/voucher', voucherRouter)
     app.use('/api/addressShip', addressShipRouter)
+    app.use('/api/dashboard', dashboardRouter)
 }

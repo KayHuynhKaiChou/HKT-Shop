@@ -11,6 +11,8 @@ userRouter.get('/refresh-token', UserController.refreshToken)
 userRouter.get('/all-users', UserController.getAllUser);
 userRouter.get('/detail-user', UserController.getDetailsUser);
 userRouter.put('/update-user', UserController.updateUser);
+userRouter.put('/change-password', UserController.changePassword);
+userRouter.post('/verify-email', UserController.verifyEmail);
 userRouter.post('/delete-user/:id', UserController.deleteUser);
 
 

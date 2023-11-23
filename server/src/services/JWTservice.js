@@ -3,12 +3,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const generalAccessToken = (payload) => {
-    const accessToken = jwt.sign({ payload },process.env.ACCESS_TOKEN, {expiresIn: 60*60})
+    const accessToken = jwt.sign({ payload },process.env.ACCESS_TOKEN, {expiresIn: '30d'})
     return accessToken
 }
 
 export const generalRefreshToken = (payload) => {
-    const refreshToken = jwt.sign({ payload },process.env.REFRESH_TOKEN, {expiresIn: '1d'})
+    const refreshToken = jwt.sign({ payload },process.env.REFRESH_TOKEN, {expiresIn: '365d'})
     return refreshToken
 }
 
@@ -20,8 +20,9 @@ export const refreshTokenJwtService = (refreshToken) => {
             jwt.verify(refreshToken, process.env.REFRESH_TOKEN, async (err, decoded) => {
                 if (err) {
                     resolve({
-                        status: 'ERR',
-                        message: 'RefreshToken is expired'
+                        status: 400,
+                        error: err.name,
+                        message: ''
                     })
                 }else{
                     /* decoded:  {
@@ -31,7 +32,8 @@ export const refreshTokenJwtService = (refreshToken) => {
                     } */
                     const accessToken = generalAccessToken(decoded.payload)
                     resolve({
-                        status: 'OK',
+                        status: 200,
+                        success: true,
                         message: 'new accessToken has been provided via refreshToken',
                         accessToken
                     })

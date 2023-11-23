@@ -8,23 +8,22 @@ import * as orderUnpaidService from './services/OrderUnpaidService'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetUser, updateUser } from './redux/slices/userSlice'
 import { cloneOrder, resetOrder } from './redux/slices/orderSlice'
-import { useMutationHooks } from './hooks/useMutationHook'
-import { TransitionGroup, CSSTransition } from "react-transition-group";
 import PrivateRouter from './routes/privateRouter'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { toastMSGObject } from './utils/utils'
+import { useMutation } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 
 export default function App() {
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
     //const [isLoading, setIsLoading] = useState(false)
-    const user = useSelector((state) => state.user)
+    const user = useSelector((state) => state.user);
+    console.log(user)
     const order = useSelector((state) => state.order);
     console.log(order)
-    console.log(user)
-
     // handle load order unpaid trong DB vào orderSlice
     const mapOrderItems = (orderItemsAPI) => {
       console.log(orderItemsAPI)
@@ -35,7 +34,6 @@ export default function App() {
     }
 
     const mapOrderItemsSelected = (orderItemsSelectedAPI) => {
-      console.log(orderItemsSelectedAPI)
       return [...orderItemsSelectedAPI].filter(item => item.isSelected).map(item => {
         const { isSelected , ...rest} = item
         return rest
@@ -51,36 +49,69 @@ export default function App() {
     }
 
     useEffect(() => {
-      if(user.id){
-        orderUnpaidService.getOrderUnpaidByUser(user?.id)
+      if(user?.name){
+        orderUnpaidService.getOrderUnpaidByUser(user.accessToken)
           .then(res => {
+            console.log(res.data)
             if(res.data){
               dispatch(cloneOrder(mapOrderUnpaid(res.data)))
             }else{
-              orderUnpaidService.addOrderUnpaid({...order , userId : user.id})
+              orderUnpaidService.addOrderUnpaid(
+                { 
+                  userId : user.id , 
+                  orderItems : order.orderItems.map(item => ({
+                    product : item.product,
+                    amount : item.amount,
+                    isSelected : false
+                  })),
+                  totalQuantity : order.totalQuantity
+                }
+              )
                 .then(res => {
                   dispatch(cloneOrder(mapOrderUnpaid(res.data)))
                 })
             }
           })
+          .catch((error) => {
+            console.log(error)
+            const {data , message} = error.response.data;
+            toast.error(message , toastMSGObject({}));
+            dispatch(cloneOrder(mapOrderUnpaid(data)))
+          })
       }
-    },[user])
+    },[user.name])
 
     // handle Update order unpaid at DB
-    const mutationUpdateOU = useMutationHooks(
-      (data) => orderUnpaidService.updateOrderUnpaid(user.id , data)
+    const mutationUpdateOU = useMutation(
+      (data) => orderUnpaidService.updateOrderUnpaid(data),{
+        onError : (error) => {
+          const {data , message} = error.response.data;
+          toast.error(message , toastMSGObject({}));
+          dispatch(cloneOrder(mapOrderUnpaid(data)))
+        }
+      }
     )
   
     useEffect(() => {
       if(user.name){
         const handle = setTimeout(() => {
           const orderFilter = order.orderItems.map((item) => {
-            if(order.orderItemsSelected.includes(item)){
+            if(order.orderItemsSelected.some(itemSelected => itemSelected.product === item.product)){
               return {...item , isSelected : true}
             }
             return {...item , isSelected : false}
           })
-          mutationUpdateOU.mutate({...order , orderItems: orderFilter})
+          mutationUpdateOU.mutate(
+            { 
+              userId : user.id , 
+              orderItems : orderFilter.map(item => ({
+                product : item.product,
+                amount : item.amount,
+                isSelected : item.isSelected
+              })),
+              totalQuantity : order.totalQuantity
+            }
+          )
         }, [1500])
         return () => {
           clearTimeout(handle)
@@ -100,10 +131,10 @@ export default function App() {
     },[])
 
     const handleDecoded = () => {
-      let storageData = user?.accessToken || localStorage.getItem('accessToken');
+      let storageData = localStorage.getItem('accessToken')
       let decoded = {}
+      console.log(storageData)
       if(storageData){
-        console.log(storageData)
         decoded = jwt_decode(storageData);
       }
       return { decoded, storageData }
@@ -111,7 +142,6 @@ export default function App() {
 
     const handleGetDetailsUser = async (token) => {
       const res = await userService.getDetailsUser(token);
-      console.log(res);
       dispatch(updateUser({...res?.data, accessToken: token}))
     }
 
@@ -121,20 +151,25 @@ export default function App() {
       if(config.headers?.authorization){
         const currentTime = new Date()
         const { decoded } = handleDecoded()
-        if (decoded?.exp < currentTime.getTime() / 1000) {
-          console.log(decoded?.exp)
-          const response = await userService.refreshToken();
-          if(response.status === 'ERR'){
-            toast.error(response.message, toastMSGObject());
-            navigate('/');
-            localStorage.clear('accessToken');
-            dispatch(resetUser());
-            dispatch(resetOrder());
-          }else{
-            console.log('accessToken mới : ',response.accessToken)
-            localStorage.setItem('accessToken',response.accessToken)
-          }
-          config.headers['authorization'] = `Bearer ${response.accessToken}`
+        // if (decoded?.exp < currentTime.getTime() / 1000) {
+        if(dayjs.unix(decoded.exp).diff(dayjs()) < 1){              
+          console.log(decoded?.exp , currentTime.getTime() / 1000)
+          userService.refreshToken()
+            .then(response => {
+              console.log('accessToken mới : ',response.accessToken);
+              localStorage.setItem('accessToken',response.accessToken);
+              dispatch(updateUser({...user , accessToken : response.accessToken}));
+              config.headers['authorization'] = `Bearer ${response.accessToken}`
+            })
+            .catch(async (error) => { 
+              toast.error("Bạn đã hết phiên đăng nhập", toastMSGObject({}));
+              navigate('/');
+              localStorage.removeItem('accessToken');
+              dispatch(resetUser());
+              dispatch(resetOrder());
+            })
+        }else{
+          config.headers['authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
         }
       }
       return config;

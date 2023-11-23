@@ -1,4 +1,4 @@
-import { Button,DatePicker,Empty,Image,Input, Radio} from "antd";
+import { Button,DatePicker,Empty,Image,Input, Modal, Radio} from "antd";
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,10 +6,11 @@ import { useMutationHooks } from "../../hooks/useMutationHook";
 import { FormProfile, WrapperAvatar, WrapperButton, WrapperContentProfile, WrapperHeader, WrapperItem, WrapperLabel, WrapperProfile, WrapperTextInform, WrapperUpload } from "./style";
 import * as userService from '../../services/UserService'
 import { updateUser } from "../../redux/slices/userSlice";
-import * as message from '../../components/MessageComponent/MessageComponent'
 import { UploadOutlined } from "@ant-design/icons";
-import { getBase64} from '../../utils/utils'
+import { getBase64, toastMSGObject} from '../../utils/utils'
 import dayjs from "dayjs";
+import OTPInput from 'react-otp-input'
+import { toast } from "react-toastify";
 
 export default function ProfilePage() {
     const user = useSelector((state) => state.user)
@@ -17,11 +18,14 @@ export default function ProfilePage() {
     const [userProfile , setUserProfile] = useState({
         name : user?.name,
         email : user?.email,
+        isVerifiedEmail : user?.isVerifiedEmail,
         avatar : user?.avatar,
         gender : user?.gender,
         birthdate : user?.birthdate
     })
     console.log(userProfile);
+    const [otp, setOtp] = useState('');
+    const [isOpenModal , setIsOpenModal] = useState(false);
   
     const mutation = useMutationHooks(
         async (data) => {
@@ -34,10 +38,10 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (isSuccess) {
-            message.success('Cập nhập thông tin thành công');
+            toast.success('Cập nhập thông tin thành công' , toastMSGObject({}));
             handleGetDetailsUser(user?.accessToken)
         } else if (isError) {
-            message.error('Lỗi cập nhật thông tin')
+            toast.error('Lỗi cập nhật thông tin')
         }
     }, [isSuccess, isError])
 
@@ -65,10 +69,48 @@ export default function ProfilePage() {
         setUserProfile({...userProfile, avatar : file.preview})
     }
 
+    const handleSendOTPviaEmail = () => {
+        if(userProfile?.email){
+            userService.verifyEmail({
+                email : userProfile.email,
+                codeOTP : null
+            })
+                .then(res => {
+                    toast.success(res.message , toastMSGObject({}));
+                    setIsOpenModal(true);
+                })
+                .catch(error => {
+                    toast.info(error.response.data.message , toastMSGObject({theme : "colored"}));
+                })
+        }else{
+            toast.error('Vui lòng nhập email để xác thực' , toastMSGObject({}))
+        }
+    }
+
+    const handleVerifyEmail = () => {
+        userService.verifyEmail({
+            email : userProfile.email,
+            codeOTP : otp
+        })
+            .then(res => {
+                toast.success(res.message , toastMSGObject({}));
+                setIsOpenModal(false);
+                dispatch(updateUser({...user, isVerifiedEmail : true}))
+            })
+            .catch(error => {
+                toast.info(error.response.data.message , toastMSGObject({theme : "colored"}));
+            })
+    }
+
+    const handleCloseOTPForm = () => {
+        setIsOpenModal(false);
+        setOtp('')
+    }
+
     return (
         <WrapperProfile>
             <LoadingComponent isloading={isLoading}>
-                {userProfile?.email ? (
+                {user.email ? (
                     <FormProfile>
                         <WrapperHeader>Thông tin người dùng</WrapperHeader>
                         <WrapperContentProfile>
@@ -86,7 +128,12 @@ export default function ProfilePage() {
                                 </WrapperItem>
                                 <WrapperItem>
                                     <WrapperLabel>Email</WrapperLabel>
-                                    <Input name="email" disabled value={userProfile.email} onChange={handleOnchangeField}/>
+                                    <Input name="email" disabled={userProfile.isVerifiedEmail} value={userProfile.email} onChange={handleOnchangeField}/>
+                                    {user?.isVerifiedEmail ? (
+                                        <Button disabled>Đã xác thực</Button>
+                                    ) : (
+                                        <Button type="primary" onClick={handleSendOTPviaEmail}>Xác thực</Button>
+                                    )}
                                 </WrapperItem>
                                 <WrapperItem>
                                     <WrapperLabel>Giới tính</WrapperLabel>
@@ -103,7 +150,7 @@ export default function ProfilePage() {
                                 <WrapperItem>
                                     <WrapperLabel>Ngày sinh</WrapperLabel>
                                     <DatePicker 
-                                        defaultValue={dayjs(userProfile.birthdate,'DD/MM/YYYY')}
+                                        defaultValue={userProfile?.birthdate ? dayjs(userProfile.birthdate,'DD/MM/YYYY') : null}
                                         format={'DD/MM/YYYY'}
                                         onChange={(_,dateString) => setUserProfile({...userProfile, birthdate : dateString})} 
                                     />
@@ -118,6 +165,46 @@ export default function ProfilePage() {
                     <Empty/>
                 )}
             </LoadingComponent>
+
+            <Modal
+                open={isOpenModal}
+                onCancel={handleCloseOTPForm}
+                footer={null}
+            >
+                <h2>{`Vui lòng nhập OTP email`}</h2>
+                <div>
+                    <p>
+                        {
+                        `Để xác thực email này là của bạn, 
+                        vui lòng nhập 1 mã code OTP gồm 6 chữ số đã được gửi qua email  
+                        `
+                        }
+                        <b>{userProfile.email}</b>
+                    </p>
+                    <OTPInput
+                        containerStyle={{ justifyContent: "center" }}
+                        value={otp}
+                        onChange={setOtp}
+                        numInputs={6}
+                        renderSeparator={<span>-</span>}
+                        renderInput={(props) => <input {...props} />}
+                        inputType='number'
+                        inputStyle={{
+                            width: '3rem',
+                            height: '3rem',
+                            margin: '0 5px',
+                            fontSize: '2rem',
+                            borderRadius: '4px',
+                            border: '1px solid rgba(0,0,0,.3)'
+                        }}
+                    />
+                </div>
+                <div>
+                    <Button style={{ width: "100%" , marginTop:15}} type="primary" danger onClick={handleVerifyEmail}>
+                        Xác nhận
+                    </Button>
+                </div>
+            </Modal>
         </WrapperProfile>
     )
 }

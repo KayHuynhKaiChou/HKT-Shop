@@ -9,7 +9,6 @@ productRouter.delete('/delete-product/:id', productController.deleteProduct)
 productRouter.get('/all-products', productController.getAllProduct);
 productRouter.get('/details-product/:id', productController.getDetailsProduct);
 productRouter.get('/all-type-product',  productController.getAllTypeProduct);
-productRouter.get('/products-end-number',  productController.getProductsEndNumber); // lấy ~ pro đã hết hàng
 
 
 

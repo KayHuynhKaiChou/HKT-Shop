@@ -1,8 +1,6 @@
 import { WrapperChart, WrapperStatistic } from "./style";
 import {useQueries} from '@tanstack/react-query'
-import * as userService from '../../services/UserService'
-import * as productService from '../../services/ProductService'
-import * as orderService from '../../services/OrderService'
+import * as dashboardService from '../../services/DashboardService'
 import { convertPrice } from "../../utils/utils";
 import LineChartComponent from "./LineChartComponent";
 import { useEffect, useMemo, useState } from "react";
@@ -13,65 +11,51 @@ import { DollarOutlined, DropboxOutlined, ShoppingCartOutlined, UsergroupAddOutl
 export default function AdminDashboard() {
     const [isLoading , setIsLoading] = useState(true);
 
-    const fetchAllUsers = async () => {
-        const res = await userService.getAllUsers();
+    const fetchGetReports = async () => {
+        const res = await dashboardService.getReports();
         return res.data
     }
 
-    const fetchAllProducts = async () => {
-        const res = await productService.getAllProduct();
-        console.log(res.data)
-        return res.data
-    }
-
-    const fetchTypesProduct = async () => {
-        const res = await productService.getAllTypeProduct();
-        return res.data
-    }
-
-    const fetchAllOrders = async () => {
-        const res = await orderService.getAllOrder();
+    const fetchGetStatistic = async () => {
+        const res = await dashboardService.getStatistic()
         return res.data
     }
 
     const resultQueries = useQueries({
         queries : [
-            {queryKey: ['users'], queryFn: fetchAllUsers},
-            {queryKey: ['all-products-1'], queryFn: fetchAllProducts},
-            {queryKey: ['type-product'], queryFn: fetchTypesProduct},
-            {queryKey: ['all-orders-0'], queryFn: fetchAllOrders},
+            {queryKey: ['reports'], queryFn: fetchGetReports},
+            {queryKey: ['statistic'], queryFn: fetchGetStatistic},
         ]
     })
 
+    console.log(resultQueries)
 
-    const totalRevenue = useMemo(() => {
-        return resultQueries[3].data?.filter(order => !order?.isCancel).reduce((total,order) => {
-            return total + order?.totalPrice
-        },0)
-    },[resultQueries[3]])
+    const dataReport = useMemo(() => {
+        return resultQueries[0].data
+    },[resultQueries[0]])
 
-    const totalProductSold = useMemo(() => {
-        return resultQueries[1].data?.reduce((total,product) => total + product?.selled , 0)
+    const dataStatistic = useMemo(() => {
+        return resultQueries[1].data
     },[resultQueries[1]])
 
-    const statisticTypeProduct = useMemo(() => { // hàm thống kê theo type product , trả 1 mảng gồm các object và mỗi object gồm {type,numberSold,numberStock}
-        return resultQueries[2].data?.reduce((acc,typePro) => {
-            return [
-                ...acc, 
-                {
-                    type: typePro,
-                    numberSold : resultQueries[1].data?.filter(product => product.type == typePro).reduce((total,product) => total + product?.selled , 0),
-                    numberStock : resultQueries[1].data?.filter(product => product.type == typePro).reduce((total,product) => total + product?.countInStock , 0)
-                }
-            ]
-        },[])
-    },[resultQueries[2],resultQueries[1]])
+    // const statisticTypeProduct = useMemo(() => { // hàm thống kê theo type product , trả 1 mảng gồm các object và mỗi object gồm {type,numberSold,numberStock}
+    //     return resultQueries[2].data?.reduce((acc,typePro) => {
+    //         return [
+    //             ...acc, 
+    //             {
+    //                 type: typePro,
+    //                 numberSold : resultQueries[1].data?.filter(product => product.type == typePro).reduce((total,product) => total + product?.selled , 0),
+    //                 numberStock : resultQueries[1].data?.filter(product => product.type == typePro).reduce((total,product) => total + product?.countInStock , 0)
+    //             }
+    //         ]
+    //     },[])
+    // },[resultQueries[2],resultQueries[1]])
 
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false)
-        }, 500);
-    },[totalProductSold])
+        }, 1000);
+    },[])
 
     return (
         <LoadingComponent delay={0} isloading={isLoading}>
@@ -81,7 +65,7 @@ export default function AdminDashboard() {
                         <div className="statistic design-product">
                             <div className="statis-content">
                                 <div className="sta-label">Số lượng sản phẩm</div>
-                                <div className="sta-value">{totalProductSold || 0}</div>
+                                <div className="sta-value">{dataReport?.totalSoldProducts}</div>
                                 <div className="sta-note">Sản phẩm đã bán</div>
                             </div>
                             <DropboxOutlined />
@@ -89,7 +73,7 @@ export default function AdminDashboard() {
                         <div className="statistic design-order">
                             <div className="statis-content">
                                 <div className="sta-label">Số lượng đơn hàng</div>
-                                <div className="sta-value">{resultQueries[2].data?.length || 0}</div>
+                                <div className="sta-value">{dataReport?.totalOrder}</div>
                                 <div className="sta-note">Đơn hàng đã giao</div>
                             </div>
                             <ShoppingCartOutlined />
@@ -97,7 +81,7 @@ export default function AdminDashboard() {
                         <div className="statistic design-customer">
                             <div className="statis-content">
                                 <div className="sta-label">Số lượng khách hàng</div>
-                                <div className="sta-value">{resultQueries[0].data?.length || 0}</div>
+                                <div className="sta-value">{dataReport?.totalUsers}</div>
                                 <div className="sta-note">Khách hàng đã đăng ký</div>
                             </div>
                             <UsergroupAddOutlined />
@@ -105,7 +89,7 @@ export default function AdminDashboard() {
                         <div className="statistic design-money">
                             <div className="statis-content">
                                 <div className="sta-label">Tổng doanh thu</div>
-                                <div className="sta-value">{convertPrice(totalRevenue || 0)}</div>
+                                <div className="sta-value">{convertPrice(dataReport?.totalRevenue)}</div>
                                 <div className="sta-note">Doanh thu từ đơn hàng</div>
                             </div>
                             <DollarOutlined />                       
@@ -113,7 +97,7 @@ export default function AdminDashboard() {
                     </WrapperStatistic>
                     <WrapperChart>
                         <div className="chart-title">Biểu đồ các loại sản phẩm</div>
-                        <LineChartComponent statisticTypeProduct={statisticTypeProduct}/>
+                        <LineChartComponent statisticTypeProduct={dataStatistic}/>
                     </WrapperChart>           
                 </>
             )}

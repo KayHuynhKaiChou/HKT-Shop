@@ -139,19 +139,4 @@ const deleteProduct = async (idProduct) => {
     )
 } 
 
-const getProductsEndNumber = async () => {
-    return new Promise(async (resolve , reject) => {
-        try {
-            const listProEndNum = await ProductModel.find({ countInStock : 0});
-            resolve({
-                status : "OK",
-                message : 'get products with count in stock = 0',
-                data : listProEndNum
-            })
-        } catch (error) {
-            reject(error)
-        }
-    })
-}
-
-export {createProduct , getDetailsProduct , getAllTypeProduct , getAllProduct , updateProduct , deleteProduct , getProductsEndNumber} 
+export {createProduct , getDetailsProduct , getAllTypeProduct , getAllProduct , updateProduct , deleteProduct} 

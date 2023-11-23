@@ -1,6 +1,6 @@
-import { Button,Radio} from "antd";
-import { WrapperAddressShip, WrapperCartPrice } from "../OrderPage/style";
-import { CustomRadio, WrapperLeft, WrapperMethods, WrapperPayment, WrapperRight, WrapperShipping } from "./style";
+import { Button,Modal,Radio, Tag} from "antd";
+import { WrapperCartPrice } from "../OrderPage/style";
+import { CustomRadio, WrapperAddressShip, WrapperLeft, WrapperMethods, WrapperPayment, WrapperRight, WrapperShipping } from "./style";
 import { useSelector } from "react-redux";
 import { convertPrice} from "../../utils/utils";
 import { useEffect, useMemo, useState } from "react";
@@ -12,7 +12,10 @@ import * as paymentService from '../../services/PaymentService'
 import * as message from '../../components/MessageComponent/MessageComponent' 
 import { UpOutlined } from "@ant-design/icons";
 import HeaderComponent from "../../components/HeaderComponent/HeaderComponent";
-import ModalFormAddressShip from "../../components/ModalFormAddressShipComponent/ModalFormAddressShip";
+import { getAddressShipsByUser } from "../../services/UserService";
+import { useQuery } from "@tanstack/react-query";
+import AddressShipItem from '../../components/AddressShipComponent/AddressShipItem'
+import { WrapperAddressShipComponent } from "../../components/AddressShipComponent/style";
 
 export default function PaymentPage() {
 
@@ -20,15 +23,36 @@ export default function PaymentPage() {
     const {state} = useLocation(); console.log(state);
     const order = useSelector(state => state.order);
     const user = useSelector(state => state.user);
-    const [isModalOpen , setIsModalOpen] = useState(false)
-    const [delivery , setDelivery] = useState('fast')
-    const [payment , setPayment] = useState('later_money')
+    const [isOpenModalAddress , setIsOpenModalAddress] = useState(false)
+    const [delivery , setDelivery] = useState('FAST')
+    const [payment , setPayment] = useState('LATER_MONEY')
     const [sdkReady , setSdkReady] = useState(false);
     const [isShowOrderSelected , setIsShowOrderSelected] = useState(false);
+    const [addressShipSelect, setAddressShipSelect] = useState({});
 
+    // handle address ship
+    const fetchGetAddressShipByUser = async () => {
+        const res = await getAddressShipsByUser();
+        return res;
+    };
+
+    const queryAddressShip = useQuery(["addresses-ship-by-user-1"],fetchGetAddressShipByUser);
+    const { data: listAddressShip, isSuccess: isSuccessListAddressShip } = queryAddressShip;
+    queryAddressShip.refetch();
+    
+    useEffect(() => {
+        isSuccessListAddressShip &&
+        setAddressShipSelect(
+            listAddressShip?.find((as) => as.default)
+        );
+    }, [isSuccessListAddressShip, listAddressShip]);
+
+    useEffect(() => {
+        isSuccessListAddressShip && setIsOpenModalAddress(false);
+    }, [addressShipSelect]);
     // calculate Price Final -----------------------------------------------------------------
     const priceDelivery = useMemo(() => { // khuyến mãi vận chuyển
-        return delivery === 'fast' ? 32000 : 45000
+        return delivery === 'FAST' ? 32000 : 45000
     },[delivery])
 
     const priceFinal = useMemo(() => { // khuyến mãi vận chuyển
@@ -46,21 +70,13 @@ export default function PaymentPage() {
 
     const handleAddOrder = () => {
         mutationAddOrder.mutate({
-            codeOrder: Math.floor(Math.random() * (99999999 - 10000000 + 1)) + 10000000,
             orderItems: order?.orderItemsSelected, 
-            fullName: user?.name,
-            address:user?.address, 
-            phone:user?.phone,
-            city: user?.city,
             deliveryMethod: delivery,
             paymentMethod: payment,
+            addressShipId: addressShipSelect._id,
             itemsPrice: state?.totalMoneyPay,
             shippingPrice: priceDelivery - state?.freeShip,
             totalPrice: priceFinal,
-            user: user?.id,
-            isPaid : false,
-            paidAt : Date.now(),
-            email: user?.email
         })
     }
 
@@ -89,21 +105,13 @@ export default function PaymentPage() {
 
     const onSuccessPaypal = (details) => {
         mutationAddOrder.mutate({
-            codeOrder: Math.floor(Math.random() * (99999999 - 10000000 + 1)) + 10000000,
             orderItems: order?.orderItemsSelected, 
-            fullName: user?.name,
-            address:user?.address, 
-            phone:user?.phone,
-            city: user?.city,
             deliveryMethod: delivery,
             paymentMethod: payment,
+            addressShipId: addressShipSelect._id,
             itemsPrice: state?.totalMoneyPay,
             shippingPrice: priceDelivery - state?.freeShip,
             totalPrice: priceFinal,
-            user: user?.id,
-            isPaid : true,
-            paidAt: details.update_time ,
-            email: user?.email
         })
     }
     
@@ -124,33 +132,48 @@ export default function PaymentPage() {
                         <WrapperShipping>
                             <div className="method-title">Chọn hình thức giao hàng</div>
                             <CustomRadio value={delivery} onChange={(e) => setDelivery(e.target.value)}>
-                                <Radio  value="fast"><span style={{color: '#ea8500', fontWeight: 'bold'}}>FAST</span> Giao hàng tiết kiệm</Radio>
-                                <Radio  value="gojek"><span style={{color: '#ea8500', fontWeight: 'bold'}}>GO_JEK</span> Giao hàng tiết kiệm</Radio>
+                                <Radio value="FAST"><span className="method-value" >FAST</span> Giao hàng tiết kiệm</Radio>
+                                <Radio value="GOJEK"><span className="method-value" >GO_JEK</span> Giao hàng tiết kiệm</Radio>
                             </CustomRadio>
                         </WrapperShipping>
                         <WrapperPayment>
                             <div className="method-title">Chọn hình thức thanh toán</div>
                             <CustomRadio value={payment} onChange={(e) => setPayment(e.target.value)}>
-                                <Radio value="later_money"> Thanh toán tiền mặt khi nhận hàng</Radio>
-                                <Radio value="paypal"> Thanh toán tiền bằng paypal</Radio>  
+                                <Radio value="LATER_MONEY"> Thanh toán tiền mặt khi nhận hàng</Radio>
+                                <Radio value="PAYPAL"> Thanh toán tiền bằng paypal</Radio>  
                             </CustomRadio>
                         </WrapperPayment>
                     </WrapperLeft>
 
                     <WrapperRight>
                         <WrapperAddressShip>
-                            <div className="block-header">
-                                <div className="block-header__title">Giao tới</div>
-                                <div className="block-header__nav" onClick={() => setIsModalOpen(true)}>Thay đổi</div>
-                            </div>
-                            <div className="customer-info">
-                                <div className="customer-info__name">{user?.name}</div>
-                                <i></i>
-                                <div className="customer-info__phone">{user?.phone}</div>
-                            </div>
-                            <div className="address-ship">
-                                {user?.address}, {user?.city}
-                            </div>
+                            {listAddressShip?.length === 0 ? (
+                                <div className="not-address">
+                                    <div className="not-address__title">Hiện tại sổ địa chỉ của bạn đang trống</div>
+                                    <div 
+                                        className="not-address__act"
+                                        onClick={() => navigate("/customer/my-address")}
+                                    >
+                                        Thêm địa chỉ mới tại đây
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="block-header">
+                                        <div className="block-header__title">Giao tới</div>
+                                        <div className="block-header__nav" onClick={() => setIsOpenModalAddress(true)}>Thay đổi</div>
+                                    </div>
+                                    <div className="customer-info">
+                                        <div className="customer-info__name">{addressShipSelect?.fullName}</div>
+                                        <i></i>
+                                        <div className="customer-info__phone">{addressShipSelect?.phone}</div>
+                                    </div>
+                                    <div className="address-ship">
+                                        <Tag color="success">{addressShipSelect?.type}</Tag>
+                                        {addressShipSelect?.addressDetail}, {addressShipSelect?.ward}, {addressShipSelect?.district}, {addressShipSelect?.province}
+                                    </div>
+                                </>
+                            )}
                         </WrapperAddressShip>
                         <WrapperCartPrice>
                             <div className="order-selected">
@@ -235,12 +258,49 @@ export default function PaymentPage() {
                             <Button onClick={handleAddOrder} >Đặt hàng</Button>
                         )}
                     </WrapperRight>
-                </WrapperMethods>
-
-                {/* {form change address ship} */}
-                <ModalFormAddressShip isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-                
+                </WrapperMethods>               
             </div>
+            {/* {form change address ship} */}
+            {/* <ModalFormAddressShip isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} /> */}
+            <Modal
+                title="Sổ địa chỉ của bạn"
+                open={isOpenModalAddress}
+                footer={null}
+                onCancel={() => setIsOpenModalAddress(false)}
+                width={720}
+            >
+                <div id="AddressShipComponent">
+                    <WrapperAddressShipComponent>
+                        <div className="instructor-address">
+                            Vui lòng chọn địa chỉ giao hàng có sẵn bên dưới
+                        </div>
+                        {listAddressShip &&
+                            listAddressShip?.map((address) => (
+                                <AddressShipItem
+                                    key={address._id}
+                                    id={address._id}
+                                    fullName={address.fullName}
+                                    phone={address.phone}
+                                    province={address.province}
+                                    district={address.district}
+                                    ward={address.ward}
+                                    addressDetail={address.addressDetail}
+                                    type={address.type}
+                                    default={address.default}
+                                    setAddressShipSelect={setAddressShipSelect}
+                                />
+                            ))
+                        }
+                        <div className="redirect-profile">
+                            Bạn muốn giao hàng đến địa chỉ khác?
+                            <span onClick={() => navigate("/customer/my-address")}>
+                            {" "}
+                            Thêm địa chỉ mới tại đây
+                            </span>
+                        </div>
+                    </WrapperAddressShipComponent>
+                </div>
+            </Modal>
         </>
     )
 }

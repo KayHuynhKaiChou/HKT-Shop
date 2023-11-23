@@ -8,12 +8,12 @@ export const createOrder = async (data) => {
 }
 
 export const getAllOrder = async () => {
-    const res = await axios.get(`${API_URL}/order/get-all-order` , config);
+    const res = await axios.get(`${API_URL}/order/get-order` , config);
     return res.data
 }
 
-export const getAllOrderByUser = async (idUser) => {
-    const res = await axios.get(`${API_URL}/order/get-all-order/${idUser}` , config);
+export const getAllOrderByUser = async () => {
+    const res = await axios.get(`${API_URL}/order/get-all-order` , config);
     return res.data
 }
 
@@ -22,13 +22,13 @@ export const getOrderDetails = async (idOrder) => {
     return res.data
 }
 
-export const cancelOrder = async (data ,idOrder) => {
-    const res = await axios.put(`${API_URL}/order/cancel-order/${idOrder}`,data , config);
+export const changeStatusOrder = async (data ,idOrder) => {
+    const res = await axios.put(`${API_URL}/order/status-order/${idOrder}?status=${data}` , {} ,config);
     return res.data
 }
 
-export const approveOrder = async (data ) => {
-    const res = await axios.put(`${API_URL}/order/approve-order`,data , config);
+export const cancelOrder = async (idOrder) => {
+    const res = await axios.delete(`${API_URL}/order/cancel-order/${idOrder}` , config);
     return res.data
 }
 

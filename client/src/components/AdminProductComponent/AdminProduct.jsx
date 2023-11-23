@@ -1,16 +1,15 @@
 import { Button, Col, Drawer, Empty, Form, Image, Input, Modal, Row, Select, Space, Tabs} from "antd";
 import { WrapperAddProductModal, WrapperAdminProduct} from "./style";
 import TableComponent from "../TableComponent/TableComponent";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { DeleteOutlined, EditOutlined, FileExcelFilled, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { useEffect, useMemo,useState } from "react";
+import { DeleteOutlined, EditOutlined, FileExcelFilled, PlusOutlined} from "@ant-design/icons";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import * as productService from '../../services/ProductService'
 import { useQuery } from "@tanstack/react-query";
 import * as message from '../../components/MessageComponent/MessageComponent'
-import Highlighter from 'react-highlight-words'
 import { useDispatch, useSelector } from "react-redux";
 import { updateTypesList } from "../../redux/slices/productSlice";
-import { exportExcel } from "../../utils/utils";
+import { convertPrice, exportExcel } from "../../utils/utils";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -128,7 +127,6 @@ export default function AdminProduct() {
     )
 
     const { data : dataUpdated, isSuccess : isSuccessUpdated , isError : isErrorUpdated } = mutationUpdate
-    console.log('dataUpdated: ',dataUpdated)
 
     useEffect(() => {
         if(isSuccessUpdated || data?.status == "OK"){
@@ -205,117 +203,19 @@ export default function AdminProduct() {
         })
     }
 
-    // Search and filter Product --------------------------------------------------------------------
-
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useRef(null);
-    const handleSearch = (selectedKeys, confirm, dataIndex) => {
-        confirm();
-        setSearchText(selectedKeys[0]);
-        setSearchedColumn(dataIndex);
-    };
-    const handleReset = (clearFilters) => {
-        clearFilters();
-        setSearchText('');
-    };
-
-    const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
-          <div
-            style={{
-              padding: 8,
-            }}
-            onKeyDown={(e) => e.stopPropagation()}
-          >
-            <Input
-              ref={searchInput}
-              placeholder={`Search ${dataIndex}`}
-              value={selectedKeys[0]}
-              onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-              onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-              style={{
-                marginBottom: 8,
-                display: 'block',
-              }}
-            />
-            <Space>
-              <Button
-                type="primary"
-                onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                icon={<SearchOutlined />}
-                size="small"
-                style={{
-                  width: 90,
-                }}
-              >
-                Search
-              </Button>
-
-              <Button
-                onClick={() => clearFilters && handleReset(clearFilters)}
-                size="small"
-                style={{
-                  width: 90,
-                }}
-              >
-                Reset
-              </Button>
-              
-              <Button
-                type="link"
-                size="small"
-                onClick={() => {
-                  close();
-                }}
-              >
-                close
-              </Button>
-            </Space>
-          </div>
-        ),
-        filterIcon: (filtered) => (
-          <SearchOutlined
-            style={{
-              color: filtered ? '#1677ff' : undefined,
-            }}
-          />
-        ),
-        onFilter: (value, record) =>
-          record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-        onFilterDropdownOpenChange: (visible) => {
-          if (visible) {
-            setTimeout(() => searchInput.current?.select(), 100);
-          }
-        },
-        render: (text) =>
-          searchedColumn === dataIndex ? (
-            <Highlighter
-              highlightStyle={{
-                backgroundColor: '#ffc069',
-                padding: 0,
-              }}
-              searchWords={[searchText]}
-              autoEscape
-              textToHighlight={text ? text.toString() : ''}
-            />
-          ) : (
-            text
-          ),
-    });
-
     const columns = [
         {
             title: 'Tên chi tiết',
             dataIndex: 'name',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <span>{text}</span>,
             width : 600,
             sorter: (a,b) => a.name.length - b.name.length,
-            ...getColumnSearchProps('name')
+            isSearchProps : true
         },
         {
             title: 'Giá tiền',
             dataIndex: 'price',
+            render: (price) => <span>{convertPrice(price)}</span>,
             sorter: (a,b) => a.price - b.price,
             filters: [
                 {
@@ -376,7 +276,8 @@ export default function AdminProduct() {
                                         setRowSelected(record)
                                     }
                                 }
-                            }}                    
+                            }} 
+                            isRowSelection={false}                   
                         />
                     )
                 }
@@ -417,14 +318,14 @@ export default function AdminProduct() {
                                     )}
                                 >
                                     <FileExcelFilled />
-                                    Export excel
+                                    Xuất file excel
                                 </Button>
                                 <Button 
                                     className="custome-btn-add"
                                     onClick={() => setIsModalOpen(true)}
                                 >
                                     <PlusOutlined />
-                                    Add new product
+                                    Thêm sản phẩm mới
                                 </Button>
                             </>
                         } 
@@ -437,7 +338,6 @@ export default function AdminProduct() {
             <WrapperAddProductModal 
                 title="Tạo mới sản phẩm" 
                 width={'100%'}
-                //style={{width: "1000px"}}
                 open={isModalOpen} 
                 footer={null} 
                 onCancel={handleCloseModal}
@@ -453,7 +353,7 @@ export default function AdminProduct() {
                     <Row gutter={32} >
                         <Col span={8} style={{borderRight: "1px solid #d5d5d5"}}>
                             <Form.Item
-                                label="Tên"
+                                label="Tên sản phẩm"
                                 name="name"
                                 rules={[
                                     {
@@ -669,7 +569,7 @@ export default function AdminProduct() {
                             <Row gutter={16}>
                                 <Col span={12}>
                                     <Form.Item
-                                        label="Tên"
+                                        label="Tên sản phẩm"
                                         name="name"
                                         rules={[
                                             {
@@ -728,7 +628,7 @@ export default function AdminProduct() {
 
                                 <Col span={12}>
                                     <Form.Item
-                                        label="Giá"
+                                        label="Giá tiền"
                                         name="price"
                                         rules={[
                                             {
@@ -828,7 +728,7 @@ export default function AdminProduct() {
             </Drawer>
 
             {/* form delete product */}
-            <Modal title="Xóa sản phẩm" open={isModalOpenDelete} onOk={handleDeleteProduct} onCancel={handleCancelDelete}>
+            <Modal title="Xóa sản phẩm" open={isModalOpenDelete} onOk={handleDeleteProduct} onCancel={() => setIsModalOpenDelete(false)}>
                 <div>Bạn chắc chắn muốn xóa sản phẩm này , khi đó sản phẩm này sẽ bị xóa vĩnh viễn</div>
             </Modal>
         </LoadingComponent>

@@ -48,7 +48,7 @@ export const orderSlice = createSlice({
       const {idsProduct} = action.payload;
       const fiterOrderItems = state?.orderItems?.filter((item) => !idsProduct.includes(item?.product));
       state.orderItems = fiterOrderItems;
-      state.orderItemsSelected = [];
+      //state.orderItemsSelected = [];
       state.totalQuantity = fiterOrderItems.reduce((total , item ) => {
         return total + item.amount
       },0);

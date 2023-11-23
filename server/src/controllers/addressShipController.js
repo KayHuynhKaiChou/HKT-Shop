@@ -7,7 +7,7 @@ class addressShipController {
             return res.status(200).json(response)
         } catch (error) {
             return res.status(500).json({
-                timestamp : Date.now(),
+                timestamp : new Date(),
                 status : 500,
                 error : "Internal Server Error",
                 message : error
@@ -21,7 +21,7 @@ class addressShipController {
             return res.status(200).json(response)
         } catch (error) {
             return res.status(500).json({
-                timestamp : Date.now(),
+                timestamp : new Date(),
                 status : 500,
                 error : "Internal Server Error",
                 message : error
@@ -38,7 +38,7 @@ class addressShipController {
             return res.status(200).json(response)
         } catch (error) {
             return res.status(500).json({
-                timestamp : Date.now(),
+                timestamp : new Date(),
                 status : 500,
                 error : "Internal Server Error",
                 message : error
@@ -55,7 +55,7 @@ class addressShipController {
             return res.status(200).json(response)
         } catch (error) {
             return res.status(500).json({
-                timestamp : Date.now(),
+                timestamp : new Date(),
                 status : 500,
                 error : "Internal Server Error",
                 message : error

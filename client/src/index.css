@@ -80,8 +80,9 @@ button:focus-visible {
   a:hover {
     color: #747bff;
   }
-  button {
+  button , input {
     background-color: #f9f9f9;
+    color: #213547;
   }
 }
 
@@ -200,6 +201,11 @@ button:focus{
 .disable-checkbox{
   cursor: no-drop;
   opacity: .35;
+}
+
+.order-detail__admin .ant-modal-content,
+.order-detail__admin .ant-modal-content .ant-modal-header{
+  background-color: #efefef !important;
 }
 
 

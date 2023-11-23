@@ -1,16 +1,13 @@
 import { Button , Progress, message} from "antd";
-import { CustomCheckBox, CustomCheckIconCircle, WrapperAddressShip, WrapperCart, WrapperCartContent, WrapperCartItem, WrapperCartItems, WrapperCartLeft, WrapperCartPrice, WrapperCartRight, WrapperCartTitle, WrapperHeaderCart, WrapperProgressPrice, WrapperVouchersChoice } from "./style";
+import { CustomCheckBox, CustomCheckIconCircle, WrapperCart, WrapperCartContent, WrapperCartItem, WrapperCartItems, WrapperCartLeft, WrapperCartPrice, WrapperCartRight, WrapperCartTitle, WrapperHeaderCart, WrapperProgressPrice, WrapperVouchersChoice } from "./style";
 import {useDispatch, useSelector} from 'react-redux'
 import { WrapperQuantityChoose } from "../ProductDetailsPage/style";
 import { changeAmount, removeAllOrderProduct, removeOrderProduct, setOrderItemsSelected } from "../../redux/slices/orderSlice";
 import { useEffect, useMemo, useState } from "react";
 import {calculatePriceFinal, convertPrice , handleChangeAmountBuy} from '../../utils/utils'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from "@tanstack/react-query";
-import * as productService from '../../services/ProductService'
 import { BiSolidDiscount } from "react-icons/bi";
 import { CheckCircleOutlined, ShoppingOutlined } from "@ant-design/icons";
-import ModalFormAddressShip from "../../components/ModalFormAddressShipComponent/ModalFormAddressShip";
 import FormModalVoucher from "../../components/FormModalVoucherComponent/FormModalVoucher";
 
 export default function OrderPage() {
@@ -18,42 +15,13 @@ export default function OrderPage() {
   const dispatch = useDispatch();
   const vouchersSelected = useSelector(state => state.voucher.vouchersSelected); console.log(vouchersSelected);
   const order = useSelector(state => state.order); console.log(order);
-  const user = useSelector(state => state.user)
-  const [listChecked , setListChecked] = useState([]); console.log(listChecked);
-  const [isModalMyAddressOpen , setIsModalMyAddressOpen] = useState(false);
+  const [listChecked , setListChecked] = useState(
+    order?.orderItemsSelected.map((itemSelected) => itemSelected.product)
+  ); console.log(listChecked);
   const [isModalMyVoucherOpen , setIsModalMyVoucherOpen] = useState(false);  
   const [percent, setPercent] = useState(0);
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
-
-  // xử lí vấn đề : nếu user A add 1 product M (chỉ còn lại 2 sp) vào order nhưng chưa thanh toán và product M đó cứ nằm trong order do redux,
-  // mà user B cx chọn đúng product M với số lượng là 2 và thanh toán , khi đó count in stock = 0 và hết hàng , thì bên user A cần check để 
-  // remove ra khỏi order của user A
-
-  const fetchGetProductEndNum = async () => {
-    const res = await productService.getProductsEndNumber();
-    return res.data
-  }
-
-  // PEN là product end number : sản phẩm hết hàng
-  const { data : listProEndNum , isSuccess : isSuccessPEN, refetch } = useQuery(['products-end-num'] , fetchGetProductEndNum , {enabled : false}) //enable : false  Tắt tự động gọi lấy dữ liệu
-  console.log(listProEndNum , isSuccessPEN)
-  useEffect(() => {
-    refetch(); // Gọi refetch để lấy dữ liệu mới , đi kèm vs enable : false
-    if(isSuccessPEN){
-      const listFilterPEN = order?.orderItems?.filter(pro => listProEndNum?.some(pen => pen._id === pro.product));
-      console.log(listFilterPEN)
-      if(listFilterPEN?.length === 0){
-        return;
-      }else{
-        listFilterPEN?.forEach(pen => {
-          dispatch(removeOrderProduct({idProduct : pen.product}));
-          listChecked?.filter(pro => pro?.product !== pen?.product);
-        })
-        messageApi.open(messageBody(`Có ${listFilterPEN?.length} sản phẩm đã hết hàng và được xóa khỏi giỏ hàng`));
-      }
-    }
-  },[isSuccessPEN])
 
   const messageBody = (msg = '') => {
     return {
@@ -89,9 +57,9 @@ export default function OrderPage() {
     }
   }
 
-  useEffect(() => {
-    setListChecked(order?.orderItemsSelected.map((itemSelected) => itemSelected.product))
-  },[])
+  // useEffect(() => {
+  //   setListChecked(order?.orderItemsSelected.map((itemSelected) => itemSelected.product))
+  // },[order?.orderItemsSelected])
 
   const handleDeleteOrderProduct = (idProduct) => {
     setListChecked([...listChecked].filter(IdChecked => IdChecked !== idProduct))
@@ -132,10 +100,7 @@ export default function OrderPage() {
     },0)
   },[order?.orderItemsSelected , order?.totalQuantity])
 
-  const totalDiscount = useMemo(() => { // theo orderSelected
-    // return order?.orderItems?.filter(item => listChecked.includes(item?.product))?.reduce((total,item) => {
-    //   return total + (item.price * item.amount * item.discount)/100
-    // },0)
+  const totalDiscount = useMemo(() => { 
     return vouchersSelected.reduce((totalDis , vou) => {
       const [type , value] = vou.discount.split('-');
       if(type === 'number'){
@@ -280,20 +245,6 @@ export default function OrderPage() {
             </WrapperCartItems>
           </WrapperCartLeft>
           <WrapperCartRight>
-            <WrapperAddressShip>
-              <div className="block-header">
-                <div className="block-header__title">Giao tới</div>
-                <div className="block-header__nav" onClick={() => setIsModalMyAddressOpen(true)}>Thay đổi</div>
-              </div>
-              <div className="customer-info">
-                <div className="customer-info__name">{user?.name}</div>
-                <i></i>
-                <div className="customer-info__phone">{user?.phone}</div>
-              </div>
-              <div className="address-ship">
-                {user?.address}, {user?.city}
-              </div>
-            </WrapperAddressShip>
             <WrapperVouchersChoice>
               <div className="vou-header">
                 <div className="header-content">HKT Shop khuyến mãi</div>
@@ -349,9 +300,6 @@ export default function OrderPage() {
           </WrapperCartRight>
         </WrapperCartContent>
       </WrapperCart>
-
-      {/* {form change address ship} */}
-      <ModalFormAddressShip isModalOpen={isModalMyAddressOpen} setIsModalOpen={setIsModalMyAddressOpen} />
     
       {/* {form modal my voucher} */}
       <FormModalVoucher isModalOpen={isModalMyVoucherOpen} setIsModalOpen={setIsModalMyVoucherOpen} />

@@ -134,62 +134,6 @@ export const WrapperCartRight = styled.div`
 
 `
 
-export const WrapperAddressShip = styled.div`
-    background-color : #fff;
-    padding : 16px;
-    border-radius : 5px;
-
-    .block-header{
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 12px;
-
-        .block-header__title{
-            color: rgb(128, 128, 137);
-            font-weight: normal;
-        }
-    
-        .block-header__nav{
-            color: rgb(11, 116, 229);
-            cursor: pointer;
-
-            &:hover{
-                color: rgb(74 161 255);
-            }
-        }
-    }
-
-
-    .customer-info{
-        display: flex;
-        align-items: center;
-        color: rgb(56, 56, 61);
-        font-weight: 600;
-    }
-
-    .customer-info__name{
-        word-break: break-word;
-    }
-
-    i{
-        display: block;
-        width: 1px;
-        height: 20px;
-        background-color: rgb(235, 235, 240);
-        margin: 0px 8px;
-    }
-
-    .customer-info__phone{
-        flex-shrink: 0;
-    }
-
-    .address-ship{
-        color: rgb(128, 128, 137);
-        font-weight: normal;
-    }
-
-`
-
 export const WrapperCartPrice = styled.div`
     background-color : #fff;
     margin-top : 15px;
@@ -356,7 +300,6 @@ export const WrapperVouchersChoice = styled.div`
     background-color : #fff;
     padding: 15px;
     border-radius: 5px;
-    margin-top : 15px;
 
     .vou-header{
         display: flex;

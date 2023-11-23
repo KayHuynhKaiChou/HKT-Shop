@@ -55,7 +55,7 @@ const createAddressShip = async (userId, addressShip) => {
 const updateAddressShip = async (addressShip) => {
     return new Promise(
         async (resolve , reject) => {
-            try {
+            try {               
                 const addressShipFind = await AddressShipModel.findById(addressShip.id)
                 if(addressShipFind.default){ // địa chỉ mặc định ban đầu
                     // tiến hành update 1 địa chỉ mặc định
@@ -67,7 +67,7 @@ const updateAddressShip = async (addressShip) => {
                         })
                     }else{
                         resolve({
-                            timestamp : Date.now(), 
+                            timestamp : new Date(), 
                             status : 400,
                             error : "Bad request",
                             message : "1 tài khoản phải có 1 địa chỉ mặc định"
@@ -100,7 +100,7 @@ const deleteAddressShip = async (addressShipId) => {
                 const addressShipFind = await AddressShipModel.findById(addressShipId);
                 if(addressShipFind.default){
                     resolve({
-                        timestamp : Date.now(), 
+                        timestamp : new Date(), 
                         status : 400,
                         error : "Bad request",
                         message : "Không thể xóa địa chỉ mặc định"

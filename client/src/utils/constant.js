@@ -22,7 +22,6 @@ export const conditionVoucher = [
   {
     key : 'min',
     title : 'Áp dụng cho đơn tối thiểu'
-
   },
   {
     key : 'cate',
@@ -33,3 +32,11 @@ export const conditionVoucher = [
     title : 'Tất cả các sản phẩm'
   }, 
 ]
+
+export const statusOrder = {
+  PENDING : 'Chờ xác nhận',
+  PROCESSING : 'Đang xử lí',
+  DELIVERING : 'Đang vận chuyển',
+  COMPLETED : 'Đã giao',
+  CANCELLED : 'Đã hủy'
+}

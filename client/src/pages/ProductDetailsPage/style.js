@@ -67,20 +67,6 @@ export const WrapperDetailBody = styled.div`
     }
 `
 
-export const WrapperAddressReceive = styled.div`
-    display : flex;
-    margin-top : 10px;
-    padding : 10px 0;
-    border-top: 1px solid rgb(242, 242, 242); 
-    div.address{
-        text-decoration: underline;
-        font-size: 15px;
-        line-height: 24px;
-        font-weight: 500;
-        margin : 0 7px;
-    }
-`
-
 export const WrapperQuantityChoose = styled.div`
     padding : 10px 0;
 

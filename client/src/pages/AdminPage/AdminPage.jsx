@@ -20,11 +20,7 @@ export default function AdminPage() {
     getItem(<span>{'Người dùng'}</span>, 'Người dùng', <UserOutlined style={{fontSize:"20px",marginRight: '5px'}}/>),
     getItem(<span>{'Sản phẩm'}</span>, 'Sản phẩm', <AppstoreOutlined style={{fontSize:"20px",marginRight: '5px'}} />),
     getItem(<span>{'Voucher'}</span>, 'Voucher', <BiSolidDiscount style={{fontSize:"20px",marginRight: '5px'}} />),
-    getItem(<span>{'Đơn hàng'}</span>, 'Đơn hàng', <ShoppingCartOutlined style={{fontSize:"20px",marginRight: '5px'}} />,[
-      getItem(<span>{'Đơn hàng trực tuyến'}</span>, 'Đơn hàng trực tuyến'),
-      getItem(<span>{'Đơn hàng đã hủy'}</span>, 'Đơn hàng đã hủy'),
-      getItem(<span>{'Đơn hàng đã duyệt'}</span>, 'Đơn hàng đã duyệt'),
-    ]),   
+    getItem(<span>{'Đơn hàng'}</span>, 'Đơn hàng', <ShoppingCartOutlined style={{fontSize:"20px",marginRight: '5px'}} />),   
   ];
 
   const handleOnCLick = ({ key }) => {
@@ -49,17 +45,9 @@ export default function AdminPage() {
         return (
           <AdminVoucher />
         )
-      case 'Đơn hàng trực tuyến':
+      case 'Đơn hàng':
         return (
-          <AdminOrder orderType={'Đơn hàng trực tuyến'}/>
-        )
-      case 'Đơn hàng đã hủy':
-        return (
-          <AdminOrder orderType={'Đơn hàng đã hủy'}/>
-        )
-      case 'Đơn hàng đã duyệt':
-        return (
-          <AdminOrder orderType={'Đơn hàng đã duyệt'}/>
+          <AdminOrder/>
         )
       default:
         return <></>
@@ -74,7 +62,7 @@ export default function AdminPage() {
           <span>HKT SHOP</span>
         </div>
         <Menu     
-          //defaultSelectedKeys={'products'}  
+          defaultSelectedKeys={['Thống kê']}  
           mode="inline"
           theme="dark"
           style={{

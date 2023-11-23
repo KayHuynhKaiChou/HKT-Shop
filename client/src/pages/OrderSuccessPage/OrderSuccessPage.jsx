@@ -66,7 +66,7 @@ export default function OrderSuccessPage() {
                     <div className="success-content__summary">
                       <div className="summary-item">
                         <div className="summary-item__label">Phương thức thanh toán</div>
-                        <div className="summary-item__value">{state?.paymentMethod === 'later_money' ? 'Thanh toán tiền mặt' : state?.paymentMethod}</div>
+                        <div className="summary-item__value">{state?.paymentMethod === 'LATER_MONEY' ? ' Thanh toán tiền mặt khi nhận hàng' : state?.paymentMethod}</div>
                       </div>
                       <div className="summary-item">
                         <div className="summary-item__label">Tổng cộng</div>
@@ -78,18 +78,23 @@ export default function OrderSuccessPage() {
               </WrapperContainerSuccess>
           </WrapperLeftSuccess>
           <WrapperRightSuccess>
-              <div className="order-package-header">
-                <div className="order-package-header__title">Mã đơn hàng : {state?.codeOrder}</div>
-                <div className="order-package-header__link">Xem đơn hàng</div>
+              <div className="order-header">
+                <div className="order-header__title">Mã đơn hàng : {state?.codeOrder}</div>
+                <div 
+                  className="order-header__link"
+                  onClick={() => navigate(`/customer/view-detail?id=${state?._id}`)}
+                >
+                  Xem đơn hàng
+                </div>
               </div>
-              <div className="order-package-divider"></div>
-              <div className="order-package-body">
+              <div className="order-divider"></div>
+              <div className="order-body">
                 {state?.orderItems.map(item => (
-                  <div key={item?.product} className="order-package-body__item">
-                    <div className="item__image">
+                  <div key={item?.product} className="order-body__item">
+                    <div className="item--image">
                       <img style={{width:"48px", height:"48px" , objectFit: "contain"}} src={item?.image} alt="" />
                     </div>
-                    <div className="item__name">{item?.name}</div>
+                    <div className="item--name">{item?.name}</div>
                   </div>
                 ))}
               </div>

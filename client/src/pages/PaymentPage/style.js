@@ -8,8 +8,7 @@ export const WrapperMethods = styled.div`
 
 export const WrapperLeft = styled.div`
     flex : 1 1 910px;
-
-    
+   
 `
 
 export const WrapperShipping = styled.div`
@@ -37,6 +36,11 @@ export const CustomRadio = styled(Radio.Group)`
     flex-direction: column;
     gap: 10px;
     justify-content: center;
+
+    span.method-value{
+        color: #ea8500;
+        font-weight: bold;
+    }
 `
 
 export const WrapperPayment = styled.div`
@@ -69,4 +73,69 @@ export const WrapperRight = styled.div`
         opacity : 0.8;
         color: rgb(255, 255, 255) !important;
     }
+`
+
+export const WrapperAddressShip = styled.div`
+    background-color : #fff;
+    padding : 16px;
+    border-radius : 5px;
+
+    .not-address{
+        text-align: center;
+
+        &__act{
+            color: rgb(26, 148, 255);
+            cursor: pointer;
+        }
+    }
+
+    .block-header{
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+
+        &__title{
+            color: rgb(128, 128, 137);
+            font-weight: normal;
+        }
+    
+        &__nav{
+            color: rgb(11, 116, 229);
+            cursor: pointer;
+
+            &:hover{
+                color: rgb(74 161 255);
+            }
+        }
+    }
+
+
+    .customer-info{
+        display: flex;
+        align-items: center;
+        color: rgb(56, 56, 61);
+        font-weight: 600;
+
+        &__name{
+            word-break: break-word;
+        }
+
+        &__phone{
+            flex-shrink: 0;
+        }
+
+        i{
+            display: block;
+            width: 1px;
+            height: 20px;
+            background-color: rgb(235, 235, 240);
+            margin: 0px 8px;
+        }
+    }
+
+    .address-ship{
+        color: rgb(128, 128, 137);
+        font-weight: normal;
+    }
+
 `

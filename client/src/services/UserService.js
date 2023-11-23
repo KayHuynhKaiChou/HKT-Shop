@@ -13,7 +13,7 @@ export const signupUser = async (data) => {
 }
 
 export const logout = async () => {
-    const res = await axios.post(`${API_URL}/user/log-out`)
+    const res = await axios.post(`${API_URL}/user/log-out`, {} , config);
     return res
 }
 
@@ -42,6 +42,16 @@ export const getAllUsers = async () => {
 
 export const updateUser = async (data) => {
     const res = await axios.put(`${API_URL}/user/update-user`, data, config)
+    return res.data
+}
+
+export const changePassword = async (data) => {
+    const res = await axios.put(`${API_URL}/user/change-password`, data, config)
+    return res.data
+}
+
+export const verifyEmail = async (data) => {
+    const res = await axios.post(`${API_URL}/user/verify-email`, data, config)
     return res.data
 }
 

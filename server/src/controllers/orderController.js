@@ -1,13 +1,13 @@
-import { approveOrder, cancelOrder, createOrder, getAllOrderByUser, getAllOrders, getOrderDetails } from "../services/orderService.js"
+import { cancelOrder, changeStatusOrder, createOrder, getAllOrderByUser, getAllOrders, getOrderDetails } from "../services/orderService.js"
 
 
 class orderController {
     createOrder = async (req,res) => {
         try {
-            const response = await createOrder(req.body);
+            const response = await createOrder(req.userId , req.body);
             return res.status(200).json(response)
         } catch (error) {
-            return res.status(401).json({
+            return res.status(500).json({
                 status : "ERR",
                 msg : error
             })
@@ -23,9 +23,9 @@ class orderController {
         }
     }
 
-    getAllOrderByUser = async ( req, res) => {
+    getAllOrderByUser = async (req, res) => {
         try {
-            const response = await getAllOrderByUser(req.params.id);
+            const response = await getAllOrderByUser(req.userId);
             return res.status(200).json(response)
         } catch (error) {
             return res.status(500).json(error)
@@ -41,18 +41,19 @@ class orderController {
         }
     }
 
-    cancelOrder = async( req, res) => {
+    changeStatusOrder = async( req, res) => {
+        const {status} = req.query
         try {
-            const response = await cancelOrder(req.body , req.params.id);
+            const response = await changeStatusOrder(status , req.params.id);
             return res.status(200).json(response)
         } catch (error) {
             res.status(500).json(error)
         }
     }
 
-    approveOrder = async (req, res) => {
+    cancelOrder = async( req, res) => {
         try {
-            const response = await approveOrder(req.body);
+            const response = await cancelOrder(req.params.id);
             return res.status(200).json(response)
         } catch (error) {
             res.status(500).json(error)

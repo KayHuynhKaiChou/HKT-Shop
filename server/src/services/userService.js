@@ -2,6 +2,7 @@ import { UserModel } from "../models/UserModel.js";
 import { default as bcrypt } from 'bcryptjs'
 import { generalAccessToken, generalRefreshToken } from "./JWTservice.js";
 import { VoucherModel } from "../models/VoucherModel.js";
+import { sendEmailToVerify } from "./emailServices.js";
 
 const createUser = async (newUser) => {
     return new Promise (
@@ -99,11 +100,66 @@ const loginUser = async (account) => {
 const getAllUser = async() => {
     return new Promise(
         async(resolve) => {
-            const allUser = await UserModel.find();
+            const listUsers = await UserModel.aggregate([
+                {
+                    $lookup: {
+                        from: 'orders',
+                        localField: '_id',
+                        foreignField: 'user',
+                        as: 'orders'
+                    }
+                },
+                {
+                    $match:{
+                        isAdmin : false
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$orders',
+                        preserveNullAndEmptyArrays: true // Giữ lại các documents mà không có mảng orders hoặc có mảng rỗng
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        name: { $first: '$name' },
+                        email: { $first: '$email' },
+                        birthdate: { $first: '$birthdate'},
+                        gender: { $first : '$gender'},
+                        avatar: { $first : '$avatar'},
+                        totalOrders: {
+                            $sum: {
+                                $cond: {
+                                    if: { $ifNull: ['$orders.codeOrder', null] }, // Sử dụng $ifNull để kiểm tra xem orders có tồn tại không
+                                    then: 1,
+                                    else: 0
+                                }
+                            }
+                        },                            
+                        totalSpentMoney: { $sum: '$orders.totalPrice' },
+                        orders: { $push: '$orders' }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        name: 1,
+                        email: 1,
+                        birthdate: 1,
+                        gender: 1,
+                        avatar: 1,
+                        totalOrders: 1,
+                        totalSpentMoney: 1,
+                        orders : 1
+                    }
+                }
+            ])
             resolve({
-                status : "OK",
-                msg: "get all users",
-                data: allUser
+                status : 200,
+                success : true,
+                message: "get all users success",
+                data: listUsers
             })
         }
     )
@@ -144,6 +200,101 @@ const updateUser = async(userId,changedUser) => {
     )
 }
 
+const changePassword = async (userId, oldPass , newPass) => {
+    return new Promise(
+        async(resolve,reject) => {
+            try {
+                const userChecked = await UserModel.findById(userId);
+                if(userChecked){
+                    const isMatched = await bcrypt.compare(oldPass, userChecked?.password);
+                    if(isMatched){
+                        if(oldPass === newPass){
+                            resolve({
+                                timestamp : new Date(), 
+                                status : 400,
+                                error : "Bad request",
+                                message : "Mật khẩu mới không được trùng khớp mật khẩu cũ"
+                            })
+                        }else{
+                            const hashNewPassword = await bcrypt.hash(newPass, 10);
+                            await UserModel.findByIdAndUpdate(userId , {
+                                $set : {
+                                    password : hashNewPassword
+                                }
+                            })
+                            resolve({
+                                status : 200,
+                                success : true,
+                                message : "Thay đổi mật khẩu thành công",
+                            })
+                        }
+                    }else{
+                        resolve({
+                            timestamp : new Date(), 
+                            status : 400,
+                            error : "Bad request",
+                            message : "Mật khẩu cũ không đúng"
+                        })
+                    }
+                }
+            } catch (error) {
+                console.log(error)
+                reject(error)
+            }           
+        }
+    )
+}
+
+const verifyEmail = async(userId , email , codeOTPInput) => {
+    return new Promise(
+        async(resolve) => {
+            const user = await UserModel.findOne({email : email})
+            if(user.isVerifiedEmail){
+                resolve({
+                    timestamp : new Date(), 
+                    status : 400,
+                    error : "Bad request",
+                    message : "Email này đã được xác thực bởi tài khoản khác"
+                })
+            }else{
+                if(codeOTPInput){
+                    if(codeOTPInput == user.codeOTP){
+                        await UserModel.findByIdAndUpdate(userId, {
+                            $set : {
+                                isVerifiedEmail : true,
+                            }
+                        })
+                        resolve({
+                            status : 200,
+                            success : true,
+                            message : "Xác thực email thành công"
+                        })
+                    }else{
+                        resolve({
+                            timestamp : new Date(), 
+                            status : 400,
+                            error : "Bad request",
+                            message : "OTP không đúng"
+                        })
+                    }
+                }else{
+                    const emailOTP = await sendEmailToVerify(email);
+                    await UserModel.findByIdAndUpdate(userId, {
+                        $set : {
+                            codeOTP : emailOTP
+                        }
+                    })
+                    resolve({
+                        status : 200,
+                        success : true,
+                        message : "Đã gửi OTP tới email thành công"
+                    })
+                }
+            }
+        }
+    )
+}
+
 const deleteUser = async(userId) => {
     return new Promise(
         async(resolve) => {
@@ -156,4 +307,4 @@ const deleteUser = async(userId) => {
     )
 }
 
-export {createUser,loginUser,getAllUser,updateUser,deleteUser,getDetailsUser}
+export {createUser,loginUser,getAllUser,updateUser,deleteUser,getDetailsUser , changePassword , verifyEmail}

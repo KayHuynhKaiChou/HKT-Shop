@@ -1,4 +1,4 @@
-import { createProduct, deleteProduct, getAllProduct, getAllTypeProduct, getDetailsProduct, getProductsEndNumber, updateProduct } from "../services/productService.js"
+import { createProduct, deleteProduct, getAllProduct, getAllTypeProduct, getDetailsProduct, updateProduct } from "../services/productService.js"
 
 class productController {
 
@@ -42,15 +42,6 @@ class productController {
             return res.status(200).json(response);
         }catch(error){
             return res.status(400).json(error);
-        }
-    }
-
-    getProductsEndNumber = async (req, res) => {
-        try {
-            const response = await getProductsEndNumber();
-            return res.status(200).json(response)
-        } catch (error) {
-            return res.status(400).json(error)
         }
     }
 }

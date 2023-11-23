@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { WrapperAddressReceive, WrapperDescribe, WrapperDetailBody, WrapperDetailHeader, WrapperDetailProduct, WrapperImgProduct, WrapperProductsByCategory, WrapperQuantityChoose } from "./style";
+import { WrapperDescribe, WrapperDetailBody, WrapperDetailHeader, WrapperDetailProduct, WrapperImgProduct, WrapperProductsByCategory, WrapperQuantityChoose } from "./style";
 import { Button, Empty, Image, Row} from "antd";
 import * as productService from '../../services/ProductService'
 import { useEffect, useState } from "react";
@@ -42,12 +42,12 @@ export default function ProductDetailsPage() {
       setVisiblePopoverCart(true);
       dispatch(addOrderProduct({
         orderItem: {
+          product: productDetails?._id,
           name: productDetails?.name,
           type: productDetails?.type,
           amount: amountBuy,
           image: productDetails?.image,
           price: productDetails?.price,
-          product: productDetails?._id,
           discount: productDetails?.discount,
           countInStock: productDetails?.countInStock
         }
@@ -121,17 +121,12 @@ export default function ProductDetailsPage() {
                       -{productDetails?.discount}%
                     </div>
                   </div>
-                  <WrapperAddressReceive>
-                    <div>Giao đến</div>
-                    <div className="address">{addressUser}</div>
-                    <div> - Đổi địa chỉ</div>
-                  </WrapperAddressReceive>
                   <LikeButtonComponent 
                   //https://developers.facebook.com/docs/plugins/
                     dataHref={'https://developers.facebook.com/docs/plugins/'} 
                   />
                   <WrapperQuantityChoose>
-                    <h5>Số lượng</h5>
+                    <h3>Số lượng</h3>
                     <div className="action-num-pro">
                       <button 
                         className="decrease" 
@@ -157,15 +152,17 @@ export default function ProductDetailsPage() {
                         <span className="count-in-stock">{`Chỉ còn lại ${productDetails?.countInStock} sản phẩm`}</span>
                       ) : null}
                     </div>
-                    <div className="group-button">
-                        <Button className="buy-action" onClick={handleBuySelectedProduct}>
-                            Mua ngay
-                        </Button>
-                        <Button className="buy-before" onClick={handleAddProductToOrder}>
-                          <BsFillCartPlusFill style={{fontSize:'18px', marginRight:5}}/>
-                          Thêm vào giỏ hàng
-                        </Button>
-                    </div>
+                    {!user.isAdmin && (
+                      <div className="group-button">
+                          <Button className="buy-action" onClick={handleBuySelectedProduct}>
+                              Mua ngay
+                          </Button>
+                          <Button className="buy-before" onClick={handleAddProductToOrder}>
+                            <BsFillCartPlusFill style={{fontSize:'18px', marginRight:5}}/>
+                            Thêm vào giỏ hàng
+                          </Button>
+                      </div>
+                    )}
                   </WrapperQuantityChoose>
               </WrapperDetailBody>
               <WrapperDescribe>

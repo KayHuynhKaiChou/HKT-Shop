@@ -7,13 +7,18 @@ export const addOrderUnpaid = async (data) => {
     return res.data
 }
 
-export const getOrderUnpaidByUser = async (idUser) => {
-    const res = await axios.get(`${API_URL}/orderUnpaid/get-order-unpaid-user/${idUser}` , config);
+export const getOrderUnpaidByUser = async (token) => {
+    const res = await axios.get(`${API_URL}/orderUnpaid/get-order-unpaid` , {
+        headers : {
+            authorization : `Bearer ${token}`
+        },
+        withCredentials : true
+    });
     return res.data
 }
 
-export const updateOrderUnpaid = async (idUser , data) => {
-    const res = await axios.put(`${API_URL}/orderUnpaid/update-order-unpaid/${idUser}`,data , config);
+export const updateOrderUnpaid = async (data) => {
+    const res = await axios.put(`${API_URL}/orderUnpaid/update-order-unpaid`,data , config);
     return res.data
 }
 

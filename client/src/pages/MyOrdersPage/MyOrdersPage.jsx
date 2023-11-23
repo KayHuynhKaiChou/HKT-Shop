@@ -10,6 +10,7 @@ import LoadingComponent from '../../components/LoadingComponent/LoadingComponent
 import { CheckCircleOutlined } from "@ant-design/icons";
 import NotOrderComponent from "../../components/NotOrderComponent/NotOrderComponent";
 import { useState } from "react";
+import { statusOrder } from "../../utils/constant";
 
 export default function MyOrdersPage() {
   const user = useSelector(state => state?.user);
@@ -51,8 +52,8 @@ export default function MyOrdersPage() {
           {orders?.length === 0 ? <NotOrderComponent/> : 
           orders?.map(order => (
             <WrapperContainerMyOrder key={order.codeOrder}>
-              {order?.isCancel ? (
-                <div className="order-cancel">Đã hủy</div>
+              {order?.status === 'CANCELLED' ? (
+                <div className="order-cancel">{statusOrder[order?.status]}</div>
               ) : (
                 <>
                   <div className="order-status">
@@ -60,18 +61,14 @@ export default function MyOrdersPage() {
                     <div className="order-status__value">{order?.isPaid ? 'đã thanh toán' : 'chưa thanh toán'}</div>
                   </div>
                   <div className="order-status">
-                    <div className="order-status__label">Vận chuyển:</div>
-                    <div className="order-status__value">{order?.isDelivered ? 'đã giao hàng' : 'đang vận chuyển'}</div>
-                  </div>
-                  <div className="order-status">
                     <div className="order-status__label">Trạng thái:</div>
                     <div className="order-status__value">
-                      {order?.isApprove ? (
+                      {order?.status !== 'PENDING' ? (
                         <div className="order-approve">
                           <CheckCircleOutlined style={{color:"#fff", background:"rgb(0, 171, 86)", borderRadius:"50%" , marginRight: "7px"}}/>
-                          <div>đã phê duyệt - Dự kiến giao hàng : {convertDateAndTime(order?.createdAt,3).date}</div>                        
+                          <div>{statusOrder[order?.status]} - Dự kiến giao hàng : {convertDateAndTime(order?.createdAt,3).date}</div>                        
                         </div>
-                      ) : 'đang chờ phê duyệt'}
+                      ) : statusOrder[order?.status]}
                     </div>
                   </div>              
                 </>
@@ -106,7 +103,7 @@ export default function MyOrdersPage() {
                   <div className="total-money__value">{convertPrice(order?.totalPrice)}</div>
                 </div>
                 <div className="button-group">
-                  {order?.isCancel ? <Button style={{marginRight:"10px"}} onClick={() => handleBuyAgain(order?.orderItems)}>Mua lại</Button> : null}
+                  {order?.status === 'CANCELLED' ? <Button style={{marginRight:"10px"}} onClick={() => handleBuyAgain(order?.orderItems)}>Mua lại</Button> : null}
                   <Button onClick={() => navigate(`/customer/view-detail?id=${order?._id}`)}>Xem chi tiết</Button>
                 </div>
               </div>

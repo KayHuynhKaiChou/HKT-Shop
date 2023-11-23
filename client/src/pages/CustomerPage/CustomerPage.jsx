@@ -8,9 +8,11 @@ import MyOrdersPage from "../MyOrdersPage/MyOrdersPage";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import DetailsOrderPage from "../DetailsOrderPage/DetailsOrderPage";
-import { BiSolidDiscount } from "react-icons/bi";
+import { BiSolidDiscount , BiMap} from "react-icons/bi";
 import MyVouchersPage from "../MyVouchersPage/MyVouchersPage";
 import MyAddressShipPage from "../MyAddressShipPage/MyAddressShipPage";
+import { AiOutlineLock } from "react-icons/ai";
+import ChangePasswordPage from "../ChangePasswordPage/ChangePasswordPage";
 
 export default function CustomerPage() {
     const user = useSelector(state => state.user);
@@ -20,8 +22,9 @@ export default function CustomerPage() {
     const items = [
         getItem(<span>{'Thông tin tài khoản'}</span>, 'profile-user', <UserOutlined style={{fontSize:"20px",marginRight: '13px'}}/>),
         getItem(<span>{'Đơn hàng của tôi'}</span>, 'my-order', <SolutionOutlined style={{fontSize:"20px",marginRight: '13px'}}/>),
+        getItem(<span>{'Đổi mật khẩu'}</span>, 'change-password', <AiOutlineLock style={{fontSize:"20px",marginRight: '13px'}}/>),
+        getItem(<span>{'Sổ địa chỉ'}</span>, 'my-address', <BiMap style={{fontSize:"20px",marginRight: '13px'}}/>),
         getItem(<span>{'Kho voucher'}</span>, 'my-voucher', <BiSolidDiscount style={{fontSize:"20px",marginRight: '13px'}}/>),
-        getItem(<span>{'Sổ địa chỉ'}</span>, 'my-address', <BiSolidDiscount style={{fontSize:"20px",marginRight: '13px'}}/>),
     ];
 
     const dictionary = (key) => {
@@ -30,6 +33,8 @@ export default function CustomerPage() {
                 return 'Thông tin tài khoản'
             case 'my-order':
                 return 'Đơn hàng của tôi'
+            case 'change-password':
+                return 'Đổi mật khẩu'
             case 'my-voucher':
                 return 'Kho voucher'
             case 'my-address':
@@ -60,6 +65,10 @@ export default function CustomerPage() {
             case 'my-address':
                 return (
                     <MyAddressShipPage/>
+                )
+            case 'change-password':
+                return (
+                    <ChangePasswordPage/>
                 )
           default:
             return <></>

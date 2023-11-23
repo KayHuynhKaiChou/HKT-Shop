@@ -64,6 +64,10 @@ export const WrapperItem = styled.div`
     display : flex;
     margin-bottom : 30px;
     align-items : center;
+
+    button{
+        margin-left: 15px;
+    }
 `
 
 export const WrapperLabel = styled.div`

@@ -4,6 +4,7 @@ const initialState = {
   id: '',
   name: '',
   email: '',
+  isVerifiedEmail: false,
   avatar: '',
   gender: '',
   birthdate: '',
@@ -18,11 +19,12 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action) => {
-      const { name = '', email = '', accessToken = '', gender = '' , birthdate = '',
+      const { name = '', email = '', isVerifiedEmail = false , accessToken = '', gender = '' , birthdate = '',
             avatar = '', _id = '', isAdmin, listVouchers , listVouRegister} = action.payload
       state.id = _id ? _id : state.id
       state.name = name ? name : state.name;
       state.email = email ? email : state.email;
+      state.isVerifiedEmail = isVerifiedEmail ? isVerifiedEmail : state.isVerifiedEmail;
       state.avatar = avatar ? avatar : state.avatar;
       state.gender = gender ? gender : state.gender;
       state.birthdate = birthdate ? birthdate : state.birthdate;

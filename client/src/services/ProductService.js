@@ -45,8 +45,3 @@ export const deleteProduct = async (idProduct) => {
     const res = await axios.delete(`${API_URL}/product/delete-product/${idProduct}` , config)
     return res.data
 }
-
-export const getProductsEndNumber = async () => {
-    const res = await axios.get(`${API_URL}/product/products-end-number`)
-    return res.data
-}

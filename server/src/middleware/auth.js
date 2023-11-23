@@ -3,6 +3,8 @@ import jwt_decode from 'jwt-decode'
 export const authUser = async (req,res,next) => {
     if(req.url == '/api/user/sign-in' || 
        req.url == '/api/user/sign-up' ||
+    //    req.url == '/api/user/verify-email' ||
+    //    req.url == '/api/dashboard/statistic' ||
        req.url == '/api/user/refresh-token' ||
        req.url.includes('/api/product/all-products') ||
        req.url == '/api/product/all-type-product' ||
@@ -13,7 +15,8 @@ export const authUser = async (req,res,next) => {
     ){ 
         next();
     }else{
-        const accessToken = req.headers.authorization.split(' ')[1];
+        const accessToken = req.headers.authorization?.split(' ')[1];
+        console.log('ass: ',accessToken)
         if(accessToken){
             const decoded = jwt_decode(accessToken);
             const {payload} = decoded

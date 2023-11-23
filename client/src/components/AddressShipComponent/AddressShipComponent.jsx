@@ -7,6 +7,10 @@ import { useMutation, useQuery} from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import AddressShipItem from './AddressShipItem';
 import { WrapperAddressShipComponent } from './style';
+import provinces from '../../data/provinces.json';
+import districts from '../../data/districts.json';
+import wards from '../../data/wards.json';
+
 
 export default function AddressShipComponent() {
   const [isModalOpen , setIsOpenModal] = useState(false);
@@ -30,7 +34,7 @@ export default function AddressShipComponent() {
   });
   const [isFormEdit , setIsFormEdit] = useState(false);
 
-  console.log(addressShipping)
+  console.log(listDistricts)
 
   const handleCancelModal = () => {
     setIsOpenModal(false);
@@ -41,8 +45,8 @@ export default function AddressShipComponent() {
 
   useEffect(() => {
     const fetchProvincesCity = async () => {
-      const data = await getListProvincesCity()
-      setListProvinces(data)
+      //const data = await getListProvincesCity()
+      setListProvinces(provinces)
     } 
     fetchProvincesCity();
   },[])
@@ -69,7 +73,8 @@ export default function AddressShipComponent() {
         ward : ""
       })
     }
-    setListDistricts(await getListDistricts(value.key))
+    //setListDistricts(await getListDistricts(value.key))
+    setListDistricts(districts.filter(district => district.province_id == value.key))
   }
 
   const handleOnChangeDistrict = async (nameDistrict , value) => {
@@ -83,7 +88,8 @@ export default function AddressShipComponent() {
         ward : ""
       })
     }
-    setListWards(await getListWards(value.key))
+    //setListWards(await getListWards(value.key));
+    setListWards(wards.filter(ward => ward.district_id == value.key))
   }
 
   const handleOnChangeWard = async (nameWard) => {
@@ -102,7 +108,6 @@ export default function AddressShipComponent() {
 
   const queryAddressShip = useQuery({queryKey : ['get-addresses-ship-0'] , queryFn:fetchGetAddressShipByUser })
   const {data : listAddressShip} = queryAddressShip
-  console.log(listAddressShip)
 
   const handleShowFormAddressShip = () => {
     setIsOpenModal(true);
@@ -184,8 +189,10 @@ export default function AddressShipComponent() {
     })
     setIsDisableCheckBox(address.default)
     setAddressShipping({...address})
-    setListDistricts(await getListDistricts(province_id))
-    setListWards(await getListWards(district_id))
+    //setListDistricts(await getListDistricts(province_id))
+    //setListWards(await getListWards(district_id))
+    setListDistricts(districts.filter(district => district.province_id == province_id))
+    setListWards(wards.filter(ward => ward.district_id == district_id))
   }
 
   // handle Delete address ship
@@ -217,7 +224,7 @@ export default function AddressShipComponent() {
     <WrapperAddressShipComponent>
       <div className="add-address" onClick={handleShowFormAddressShip}>
         <AiOutlinePlus />
-        <span>Add new address</span>
+        <span>Thêm địa chỉ ship mới</span>
       </div>
       {listAddressShip && listAddressShip?.map((address) => (
         <AddressShipItem 
@@ -261,7 +268,7 @@ export default function AddressShipComponent() {
               onChange={handleOnChangeProvince}
             >
               <Select.Option value = {""}>---Choice Province/city---</Select.Option>
-              {listProvinces.map(p => (
+              {listProvinces?.map(p => (
                 <Select.Option key={p["province_id"]} value={p["province_name"]}>{p["province_name"]}</Select.Option>
               ))}
             </Select>

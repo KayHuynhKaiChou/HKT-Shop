@@ -13,7 +13,7 @@ import { useDebounce } from '../../hooks/userDebounce';
 import * as productService from '../../services/ProductService'
 import { useQuery } from '@tanstack/react-query';
 import { resetOrder } from '../../redux/slices/orderSlice';
-
+import * as userService from '../../services/UserService'
 
 export default function HeaderComponent(props) {
   const {
@@ -58,7 +58,8 @@ export default function HeaderComponent(props) {
 
   const handleLogOut = async () => {
     navigate('/');
-    localStorage.clear('accessToken');
+    await userService.logout();
+    localStorage.removeItem('accessToken');
     dispatch(resetUser());
     dispatch(resetOrder());
   }
@@ -73,11 +74,14 @@ export default function HeaderComponent(props) {
 
   const contentUser = (
     <div>
-      <WrapperContentPopover onClick={() => navigate('/customer/profile-user')}>Thông tin tài khoản</WrapperContentPopover>
-      <WrapperContentPopover onClick={() => navigate('/customer/my-order')}>Đơn hàng của tôi</WrapperContentPopover>      
       {user?.isAdmin ? (
         <WrapperContentPopover onClick={() => navigate('/system/admin')}>Quản lý hệ thống</WrapperContentPopover>
-      ) : null}
+      ) : (
+        <>
+          <WrapperContentPopover onClick={() => navigate('/customer/profile-user')}>Thông tin tài khoản</WrapperContentPopover>
+          <WrapperContentPopover onClick={() => navigate('/customer/my-order')}>Đơn hàng của tôi</WrapperContentPopover>                        
+        </>
+      )}
       <WrapperContentPopover onClick={handleLogOut} >Đăng xuất</WrapperContentPopover>
     </div>
   )
@@ -185,15 +189,15 @@ export default function HeaderComponent(props) {
               </WrapperAccountHeader>
             )}
           </LoadingComponent>
-          {!isHiddenCart && (
-          <Popover content={contentCart} trigger={''} open={visiblePopoverCart} placement='bottomLeft'>
-            <WrapperCartHeader onClick={() => navigate('/cart')}>
-              <Badge count={order?.totalQuantity} size='small'>
-                <ShoppingCartOutlined style={{fontSize: "35px",color:"#fff"}}/>
-              </Badge>
-              <span>Giỏ hàng</span>
-            </WrapperCartHeader>          
-          </Popover>
+          {(!isHiddenCart || !user?.isAdmin) && (
+            <Popover content={contentCart} trigger={''} open={visiblePopoverCart} placement='bottomLeft'>
+              <WrapperCartHeader onClick={() => navigate('/cart')}>
+                <Badge count={order?.totalQuantity} size='small'>
+                  <ShoppingCartOutlined style={{fontSize: "35px",color:"#fff"}}/>
+                </Badge>
+                <span>Giỏ hàng</span>
+              </WrapperCartHeader>          
+            </Popover>
           )}
         </Col>
       </WrapperHeader>
