@@ -12,7 +12,9 @@ import { BiSolidDiscount , BiMap} from "react-icons/bi";
 import MyVouchersPage from "../MyVouchersPage/MyVouchersPage";
 import MyAddressShipPage from "../MyAddressShipPage/MyAddressShipPage";
 import { AiOutlineLock } from "react-icons/ai";
+import { BsCreditCard2Back } from "react-icons/bs";
 import ChangePasswordPage from "../ChangePasswordPage/ChangePasswordPage";
+import BankingPage from "../BankingPage/BankingPage";
 
 export default function CustomerPage() {
     const user = useSelector(state => state.user);
@@ -24,6 +26,7 @@ export default function CustomerPage() {
         getItem(<span>{'Đơn hàng của tôi'}</span>, 'my-order', <SolutionOutlined style={{fontSize:"20px",marginRight: '13px'}}/>),
         getItem(<span>{'Đổi mật khẩu'}</span>, 'change-password', <AiOutlineLock style={{fontSize:"20px",marginRight: '13px'}}/>),
         getItem(<span>{'Sổ địa chỉ'}</span>, 'my-address', <BiMap style={{fontSize:"20px",marginRight: '13px'}}/>),
+        getItem(<span>{'Thanh toán'}</span>, 'my-payment', <BiMap style={{fontSize:"20px",marginRight: '13px'}}/>),
         getItem(<span>{'Kho voucher'}</span>, 'my-voucher', <BiSolidDiscount style={{fontSize:"20px",marginRight: '13px'}}/>),
     ];
 
@@ -39,6 +42,8 @@ export default function CustomerPage() {
                 return 'Kho voucher'
             case 'my-address':
                 return 'Sổ địa chỉ'
+            case 'my-payment':
+                return 'Phương thức thanh toán'
             default:
                 break;
         }
@@ -61,6 +66,10 @@ export default function CustomerPage() {
             case 'my-voucher':
                 return (
                     <MyVouchersPage/>
+                )
+            case 'my-payment':
+                return (
+                    <BankingPage/>
                 )
             case 'my-address':
                 return (

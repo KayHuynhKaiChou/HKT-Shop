@@ -23,7 +23,6 @@ export default function ProfilePage() {
         gender : user?.gender,
         birthdate : user?.birthdate
     })
-    console.log(userProfile);
     const [otp, setOtp] = useState('');
     const [isOpenModal , setIsOpenModal] = useState(false);
   

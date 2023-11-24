@@ -189,7 +189,7 @@ export default function HeaderComponent(props) {
               </WrapperAccountHeader>
             )}
           </LoadingComponent>
-          {(!isHiddenCart || !user?.isAdmin) && (
+          {(!user?.isAdmin && !isHiddenCart) && (
             <Popover content={contentCart} trigger={''} open={visiblePopoverCart} placement='bottomLeft'>
               <WrapperCartHeader onClick={() => navigate('/cart')}>
                 <Badge count={order?.totalQuantity} size='small'>

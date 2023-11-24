@@ -115,7 +115,7 @@ export const WrapperContainerSuccess = styled.div`
         height : 45px;
         padding : 10px 40px !important;
     }
-}
+
 `
 
 export const WrapperRightSuccess = styled.div`
@@ -126,6 +126,10 @@ export const WrapperRightSuccess = styled.div`
     align-self: flex-start;
     max-height: 250px; 
     overflow-y: auto;
+
+    .order-email{
+        padding: 12px 16px;
+    }
 
     .order-header {
         font-size: 14px;

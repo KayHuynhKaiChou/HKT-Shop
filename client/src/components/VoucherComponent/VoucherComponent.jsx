@@ -18,9 +18,9 @@ export default function VoucherComponent(props) {
     const locate = useLocation();
     const navigate = useNavigate();
     const [percentFS , setPercentFS] = useState(100);
-    const [isBtnActive , setIsBtnActive] = useState(false); console.log(isBtnActive);
+    const [isBtnActive , setIsBtnActive] = useState(false);
     const dispatch = useDispatch();
-    const vouchersSelected = useSelector(state => state.voucher.vouchersSelected); console.log(vouchersSelected);
+    const vouchersSelected = useSelector(state => state.voucher.vouchersSelected);
     const order = useSelector(state => state.order);
 
     const isExpiredCoupon = useMemo(() => {

@@ -24,7 +24,6 @@ export default function MyOrdersPage() {
   }
 
   const {isLoading : isLoadingOrders , data : orders} = useQuery({queryKey: ['orders'], queryFn: fetchAllOrderByUser})
-  console.log(orders)
 
   const handleBuyAgain = (orderItems) => {
     orderItems.forEach(orderItem => {

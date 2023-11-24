@@ -22,10 +22,7 @@ export default function SignInPage({form = useForm , setTypeForm}) {
     (data) => userService.loginUser(data) // data chính là inputValues ở dưới
   )
 
-  const { data , isLoading , isSuccess  } = mutation;
-  console.log("isSuccess: ",isSuccess)
-  console.log("data: ",data);
-  
+  const { data , isLoading , isSuccess  } = mutation;  
 
   const onFinish = (inputValues) => {
     mutation.mutate(inputValues);

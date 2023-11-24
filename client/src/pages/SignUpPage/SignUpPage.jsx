@@ -11,7 +11,7 @@ import {useSelector } from "react-redux";
 
 export default function SignUpPage({form = useForm , setIsModalOpen , setTypeForm}) {
   const {email , password , confirmPassword} = form.getFieldsValue();
-  const user = useSelector(state => state.user); console.log(user);
+  const user = useSelector(state => state.user);
 
   // handle sign up
   const mutationSignUp = useMutationHooks(
@@ -23,11 +23,6 @@ export default function SignUpPage({form = useForm , setIsModalOpen , setTypeFor
   const handleSignUp = (inputValues) => {
     mutationSignUp.mutate(inputValues); // rerender lại component này
   }
-
-  // const a = new Date()
-  // a.setDate(a.getDate() - 9); 
-  // const b =  Date.now() - a.getTime() 
-  // console.log(Math.floor(b / (1000 * 60 * 60 * 24))) // ra 9
 
   useEffect(() => {
     if(isSuccess && data?.status !== "ERR"){

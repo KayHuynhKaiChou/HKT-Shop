@@ -34,7 +34,6 @@ export default function AddressShipComponent() {
   });
   const [isFormEdit , setIsFormEdit] = useState(false);
 
-  console.log(listDistricts)
 
   const handleCancelModal = () => {
     setIsOpenModal(false);
@@ -155,7 +154,6 @@ export default function AddressShipComponent() {
   )
 
   const {data : responseUpdate , isSuccess : isSuccessUpdate} = mutationEditAddress;
-  console.log(responseUpdate)
 
   useEffect(() => {
     if(isSuccessUpdate && responseUpdate?.success){
@@ -165,7 +163,6 @@ export default function AddressShipComponent() {
   },[isSuccessUpdate])
 
   const handleEditAddressShip = () => {
-    console.log(form.getFieldValue());
     mutationEditAddress.mutate({
       ...form.getFieldValue(),
       default : addressShipping.default
@@ -202,7 +199,7 @@ export default function AddressShipComponent() {
   )
 
   const handleDeleteAddressShip = async (idAddressShip) => {
-    if(confirm('Sure Delete this address ship')){
+    if(confirm('Bạn chắc chắn muốn xóa địa chỉ này')){
       mutationDeleteAddress.mutate(idAddressShip, {
         onSettled : () => {
           queryAddressShip.refetch();
@@ -262,46 +259,46 @@ export default function AddressShipComponent() {
             <Input placeholder='Nhập Số điện thoại' name='phone' value={addressShipping.phone} onChange={handleOnChangeInput}/>
           </Form.Item>
 
-          <Form.Item label="Province/city" name="province" rules={[{ required: true }]}>
+          <Form.Item label="Tỉnh/thành phố" name="province" rules={[{ required: true }]}>
             <Select
-              defaultValue={'---Choice Province/city---'}
+              defaultValue={'---Chọn tỉnh/thành phố---'}
               onChange={handleOnChangeProvince}
             >
-              <Select.Option value = {""}>---Choice Province/city---</Select.Option>
+              <Select.Option value = {""}>---Chọn tỉnh/thành phố---</Select.Option>
               {listProvinces?.map(p => (
                 <Select.Option key={p["province_id"]} value={p["province_name"]}>{p["province_name"]}</Select.Option>
               ))}
             </Select>
           </Form.Item>
 
-          <Form.Item label="District" name="district" rules={[{ required: true }]}>
+          <Form.Item label="Quận/huyện" name="district" rules={[{ required: true }]}>
             <Select
               //value={addressShipping.district}
               disabled = {listDistricts.length === 0}
-              defaultValue={'---Choice District---'}
+              defaultValue={'---Chọn quận/huyện---'}
               onChange={handleOnChangeDistrict}
             >
-              <Select.Option value = {""}>---Choice District---</Select.Option>
+              <Select.Option value = {""}>---Chọn quận/huyện---</Select.Option>
               {listDistricts.map(d => (
                 <Select.Option key={d["district_id"]} value={d["district_name"]}>{d["district_name"]}</Select.Option>
               ))}
             </Select>
           </Form.Item>
 
-          <Form.Item label="Wards" name="ward" rules={[{ required: true }]}>
+          <Form.Item label="Phường/xã" name="ward" rules={[{ required: true }]}>
             <Select
               disabled = {listWards.length === 0}
-              defaultValue={'---Choice Ward---'}
+              defaultValue={'---Chọn phường/xã---'}
               onChange={handleOnChangeWard}
             >
-              <Select.Option value={""}>---Choice Ward---</Select.Option>
+              <Select.Option value={""}>---Chọn phường/xã---</Select.Option>
               {listWards.map(w => (
                 <Select.Option key={w["ward_id"]} value={w["ward_name"]}>{w["ward_name"]}</Select.Option>
               ))}
             </Select>
           </Form.Item>
 
-          <Form.Item label="Address" name="addressDetail" rules={[{ required: true }]}>
+          <Form.Item label="Số nhà" name="addressDetail" rules={[{ required: true }]}>
             <Input.TextArea 
               placeholder='ví dụ : 52 Trần Hưng Đạo ...' 
               name='addressDetail'
@@ -328,7 +325,7 @@ export default function AddressShipComponent() {
                   onChange={handleOnChangeInput} 
                   checked={addressShipping.default}
                 >
-                  Set as default address
+                  Thiết lập như địa chỉ mặc định
                 </Checkbox>                
               </Tooltip>
             ) : (
@@ -337,7 +334,7 @@ export default function AddressShipComponent() {
                 onChange={handleOnChangeInput} 
                 checked={addressShipping.default}
               >
-                Set as default address
+                Thiết lập như địa chỉ mặc định
               </Checkbox>
             )}
           </Form.Item>

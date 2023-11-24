@@ -13,11 +13,11 @@ import FormModalVoucher from "../../components/FormModalVoucherComponent/FormMod
 export default function OrderPage() {
   
   const dispatch = useDispatch();
-  const vouchersSelected = useSelector(state => state.voucher.vouchersSelected); console.log(vouchersSelected);
-  const order = useSelector(state => state.order); console.log(order);
+  const vouchersSelected = useSelector(state => state.voucher.vouchersSelected);
+  const order = useSelector(state => state.order); 
   const [listChecked , setListChecked] = useState(
     order?.orderItemsSelected.map((itemSelected) => itemSelected.product)
-  ); console.log(listChecked);
+  );
   const [isModalMyVoucherOpen , setIsModalMyVoucherOpen] = useState(false);  
   const [percent, setPercent] = useState(0);
   const navigate = useNavigate();

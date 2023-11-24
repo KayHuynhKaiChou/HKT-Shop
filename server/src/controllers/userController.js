@@ -26,7 +26,6 @@ class UserController {
                     msg : "Mật khẩu xác thực ko trùng khớp"
                 })
             }
-            //console.log("request: ",req.body);
             const response = await createUser(req.body);
             return res.status(200).json(response)
         } catch (error) {

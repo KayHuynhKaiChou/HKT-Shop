@@ -55,12 +55,12 @@ export default function AddressShipItem(props) {
                         default : isDefault
                     })}>
                         <AiTwotoneEdit />
-                        Edit
+                        Chỉnh sửa
                     </div>
                     {!isDefault && (
                         <div className='act-delete' onClick={() => handleDeleteAddressShip && handleDeleteAddressShip(id || 0)}>
                             <AiFillDelete />
-                            Delete
+                            Xóa
                         </div>
                     )}
                 </>
@@ -82,7 +82,7 @@ export default function AddressShipItem(props) {
                     {isDefault && (
                         <span>
                             <AiOutlineCheckCircle />
-                            <span className='ms-2'>Default address</span>
+                            <span className='ms-2'>Địa chỉ mặc định</span>
                         </span>
                     )}
                 </div>

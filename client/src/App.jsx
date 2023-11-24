@@ -1,7 +1,7 @@
 import {Route , Routes, useLocation, useNavigate } from 'react-router-dom'
 import { routes } from './routes'
 import DefaultComponent from './components/DefaultComponent/DefaultComponent'
-import { Fragment, useEffect} from 'react'
+import { Fragment, useEffect, useState} from 'react'
 import jwt_decode from 'jwt-decode'
 import * as userService from './services/UserService'
 import * as orderUnpaidService from './services/OrderUnpaidService'
@@ -19,14 +19,12 @@ export default function App() {
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-    //const [isLoading, setIsLoading] = useState(false)
     const user = useSelector((state) => state.user);
-    console.log(user)
     const order = useSelector((state) => state.order);
-    console.log(order)
+    const [isLoading , setIsLoading] = useState(true);
+
     // handle load order unpaid trong DB vào orderSlice
     const mapOrderItems = (orderItemsAPI) => {
-      console.log(orderItemsAPI)
       return [...orderItemsAPI].map(item => {
         const { isSelected , ...rest} = item
         return rest
@@ -52,7 +50,6 @@ export default function App() {
       if(user?.name){
         orderUnpaidService.getOrderUnpaidByUser(user.accessToken)
           .then(res => {
-            console.log(res.data)
             if(res.data){
               dispatch(cloneOrder(mapOrderUnpaid(res.data)))
             }else{
@@ -73,7 +70,6 @@ export default function App() {
             }
           })
           .catch((error) => {
-            console.log(error)
             const {data , message} = error.response.data;
             toast.error(message , toastMSGObject({}));
             dispatch(cloneOrder(mapOrderUnpaid(data)))
@@ -122,18 +118,16 @@ export default function App() {
 
     useEffect(() => {
       const { storageData, decoded } = handleDecoded();
-      console.log(decoded)
       if (decoded?.payload?._id) {
         handleGetDetailsUser(storageData)
       }else{
-        console.log(decoded?.payload?.payload?._id)
+        
       }
     },[])
 
     const handleDecoded = () => {
       let storageData = localStorage.getItem('accessToken')
       let decoded = {}
-      console.log(storageData)
       if(storageData){
         decoded = jwt_decode(storageData);
       }
@@ -149,14 +143,12 @@ export default function App() {
     axios.interceptors.request.use(async function (config) {
       // Do something before request is sent , it is the same middleware in BE     
       if(config.headers?.authorization){
-        const currentTime = new Date()
+        //const currentTime = new Date()
         const { decoded } = handleDecoded()
         // if (decoded?.exp < currentTime.getTime() / 1000) {
         if(dayjs.unix(decoded.exp).diff(dayjs()) < 1){              
-          console.log(decoded?.exp , currentTime.getTime() / 1000)
           userService.refreshToken()
             .then(response => {
-              console.log('accessToken mới : ',response.accessToken);
               localStorage.setItem('accessToken',response.accessToken);
               dispatch(updateUser({...user , accessToken : response.accessToken}));
               config.headers['authorization'] = `Bearer ${response.accessToken}`
@@ -177,13 +169,6 @@ export default function App() {
       // Do something with request error
       return Promise.reject(error);
     });
-
-    // const getRouteChildren = (path) => {
-    //   if(path.includes('/customer/view-detail')){
-    //     return <Route path=':id' element={<DetailsOrderPage/>} />
-    //   }
-    //   return null
-    // }
 
     return (
       // <TransitionGroup>

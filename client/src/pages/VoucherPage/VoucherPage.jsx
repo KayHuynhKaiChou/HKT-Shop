@@ -23,14 +23,12 @@ export default function VoucherPage() {
     }
 
     const {data : listVoucher , isSuccess : isSuccessVouchers} = useQuery({queryKey : ['all-voucher-1'], queryFn : getAllVoucher})
-    console.log(listVoucher)
 
     // add voucher to User
 
     const mutation = useMutationHooks(
         async (data) => {
             const { id, accessToken, ...rests } = data
-            console.log(rests)
             await userService.updateUser(rests, accessToken);
         }
     )

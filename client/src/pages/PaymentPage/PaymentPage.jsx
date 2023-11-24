@@ -2,7 +2,7 @@ import { Button,Modal,Radio, Tag} from "antd";
 import { WrapperCartPrice } from "../OrderPage/style";
 import { CustomRadio, WrapperAddressShip, WrapperLeft, WrapperMethods, WrapperPayment, WrapperRight, WrapperShipping } from "./style";
 import { useSelector } from "react-redux";
-import { convertPrice} from "../../utils/utils";
+import { convertPrice, toastMSGObject} from "../../utils/utils";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {useMutationHooks} from "../../hooks/useMutationHook"
@@ -16,13 +16,14 @@ import { getAddressShipsByUser } from "../../services/UserService";
 import { useQuery } from "@tanstack/react-query";
 import AddressShipItem from '../../components/AddressShipComponent/AddressShipItem'
 import { WrapperAddressShipComponent } from "../../components/AddressShipComponent/style";
+import { ToastContainer, toast } from "react-toastify";
+
 
 export default function PaymentPage() {
-
+    const [isLoading , setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const {state} = useLocation(); console.log(state);
+    const {state} = useLocation();
     const order = useSelector(state => state.order);
-    const user = useSelector(state => state.user);
     const [isOpenModalAddress , setIsOpenModalAddress] = useState(false)
     const [delivery , setDelivery] = useState('FAST')
     const [payment , setPayment] = useState('LATER_MONEY')
@@ -69,6 +70,11 @@ export default function PaymentPage() {
     )
 
     const handleAddOrder = () => {
+        if(listAddressShip.length === 0){
+            toast.info("Sổ địa chỉ của bạn đang trống" , toastMSGObject({theme:"colored"}));
+            return;
+        }
+        setIsLoading(true);
         mutationAddOrder.mutate({
             orderItems: order?.orderItemsSelected, 
             deliveryMethod: delivery,
@@ -125,6 +131,7 @@ export default function PaymentPage() {
 
     return (
         <>
+            <ToastContainer/>
             <HeaderComponent nameHeader = 'Thanh toán' isHiddenSearch={true} isHiddenCart={true}/>
             <div style={{padding: "10px 120px", backgroundColor:"#efefef" , height:"100vh"}}>
                 <WrapperMethods>
@@ -170,7 +177,7 @@ export default function PaymentPage() {
                                     </div>
                                     <div className="address-ship">
                                         <Tag color="success">{addressShipSelect?.type}</Tag>
-                                        {addressShipSelect?.addressDetail}, {addressShipSelect?.ward}, {addressShipSelect?.district}, {addressShipSelect?.province}
+                                        {addressShipSelect?.addressDetail}, {addressShipSelect?.ward}, {addressShipSelect?.district.split('-')[0]}, {addressShipSelect?.province.split('-')[0]}
                                     </div>
                                 </>
                             )}
@@ -255,7 +262,13 @@ export default function PaymentPage() {
                                 />
                             </div>
                         ) : (
-                            <Button onClick={handleAddOrder} >Đặt hàng</Button>
+                            <Button onClick={handleAddOrder} >
+                                {isLoading ? (
+                                    <>
+                                        . . . <span>Đang đặt hàng</span>                                    
+                                    </>
+                                ) : 'Đặt hàng' }                             
+                            </Button>
                         )}
                     </WrapperRight>
                 </WrapperMethods>               

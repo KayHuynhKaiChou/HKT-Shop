@@ -28,8 +28,6 @@ export default function AdminDashboard() {
         ]
     })
 
-    console.log(resultQueries)
-
     const dataReport = useMemo(() => {
         return resultQueries[0].data
     },[resultQueries[0]])

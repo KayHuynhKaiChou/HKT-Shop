@@ -14,7 +14,7 @@ import NotOrderComponent from "../NotOrderComponent/NotOrderComponent";
 import { statusOrder } from "../../utils/constant";
 
 export default function AdminUser() {
-  const [rowSelected , setRowSelected] = useState(''); console.log(rowSelected)
+  const [rowSelected , setRowSelected] = useState(''); 
   const [isLoading , setIsLoading] = useState(true);
   const [isOpenDraw , setIsOpenDraw] = useState(false);
 

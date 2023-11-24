@@ -15,12 +15,9 @@ import { WrapperEmptyVoucher } from "./style";
 
 export default function MyVouchersPage({isModalForm = false}) {
 
-    const user = useSelector(state => state.user); console.log(user)
+    const user = useSelector(state => state.user); 
     const dispatch = useDispatch();
 
-    // useEffect(() => {
-    //     dispatch(updateUser({...user , listVouchers : []}))
-    // },[])
     
     const fetchGetVoucherByUser = async (context) => {
 
@@ -29,7 +26,6 @@ export default function MyVouchersPage({isModalForm = false}) {
     }
 
     const { data : vouchersByUser , refetch} = useQuery({queryKey : ['vouchers-by-user-0',user.id] , queryFn : fetchGetVoucherByUser}, {enabled : false})
-    console.log(vouchersByUser)
 
     const mutationRemoveVouExpired = useMutationHooks(
         async (data) => {
@@ -52,7 +48,6 @@ export default function MyVouchersPage({isModalForm = false}) {
         if(vouchersByUser){
             const expiredVou = vouchersByUser.find(vou => isExpiredVoucher(vou.expiredDate));
             const expiredVouRegister = user.listVouRegister.find(vou => isExpiredVoucher(vou.expiredDate));
-            console.log(expiredVou)
             if(expiredVou || expiredVouRegister){
                 const vouchersUnexpired = user.listVouchers.filter(vouId => vouId !== expiredVou._id);
                 const vouchersUnexpiredRegister = user.listVouRegister.filter(vou => vou._id !== expiredVou._id);

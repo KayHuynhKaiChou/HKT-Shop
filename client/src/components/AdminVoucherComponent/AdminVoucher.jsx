@@ -37,7 +37,7 @@ export default function AdminVoucher() {
     expiredDate : '',
     expiredTime : '',
   })
-  const [voucher , setVoucher] = useState(inittial()); console.log(voucher)
+  const [voucher , setVoucher] = useState(inittial()); 
 
   const getAllVoucher = async () => {
     const res = await voucherService.getAllVoucher();
@@ -46,7 +46,6 @@ export default function AdminVoucher() {
 
   const queryVouchers = useQuery({queryKey: ['all-voucher-0'], queryFn: getAllVoucher});
   const {data : listVoucher , isLoading : isLoadingVouchers} = queryVouchers
-  console.log(listVoucher)
 
   const customeListVoucher = (voucherByCdt) => {
     const [type , value] = voucherByCdt.condition.split('-');
@@ -95,7 +94,6 @@ export default function AdminVoucher() {
   )
 
   const {data : dataVoucher , isSuccess : isSuccessVoucher , isError : isErrorVoucher} = mutationAction;
-  console.log(dataVoucher)
 
   useEffect(() => {
     if(isSuccessVoucher && dataVoucher?.status === 'OK'){
@@ -134,7 +132,6 @@ export default function AdminVoucher() {
     voucherService.getVoucherById(idVou)
       .then(res => {
         const vouResponse = res.data;
-        console.log(vouResponse)
         setVoucher({
           content : vouResponse.content,
           discount : {

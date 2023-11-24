@@ -2,6 +2,7 @@ import { OrderUnpaidModel } from '../models/OrderUnpaidModel.js';
 import { ProductModel } from '../models/ProductModel.js';
 
 const checkCountInStock = async (cart) => {
+    console.log(cart)
     let response = {};
     if(cart.totalQuantity === 0) return response;
     const arrPromise = cart.orderItems.map(async (item) => {
@@ -60,6 +61,13 @@ const getOrderUnpaidByUser = async (idUser) => {
         async (resolve, reject) => {
             try {
                 const orderUnpaid = await OrderUnpaidModel.findOne({userId : idUser});
+                if(!orderUnpaid){
+                    resolve({
+                        status : 200,
+                        success : true,
+                        message : "Your cart is empty",
+                    })
+                }
                 const response = await checkCountInStock(orderUnpaid);
                 const cartsDetail = await mappingItemsCart(orderUnpaid);
                 if(JSON.stringify(response) === '{}'){
@@ -115,6 +123,7 @@ const updateOrderUnpaid = async (idUser , updatedOrder) => {
                     { $set : updatedOrder},
                     { new : true}
                 )
+                console.log(idUser , updatedOrder)
                 const response = await checkCountInStock(orderUnpaid);
                 if(JSON.stringify(response) === '{}'){
                     resolve({
@@ -132,6 +141,7 @@ const updateOrderUnpaid = async (idUser , updatedOrder) => {
                 }
 
             } catch (error) {
+                console.log(error)
                 reject(error)
             }
         }

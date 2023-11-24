@@ -18,7 +18,7 @@ import parse from 'html-react-parser';
 
 export default function ProductDetailsPage() {
   const user = useSelector((state) => state.user);
-  const order = useSelector(state => state.order); console.log(order);
+  const order = useSelector(state => state.order); 
   const navigate = useNavigate();
   const [clickBuyToShowModal, setClickBuyToShowModal] = useState(false);
   const {type,id} = useParams();

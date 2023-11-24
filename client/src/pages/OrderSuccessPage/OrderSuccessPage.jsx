@@ -14,15 +14,14 @@ export default function OrderSuccessPage() {
   const {state} = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector(state => state.user); console.log('user:', user)
-  const vouchersSelected = useSelector(state => state.voucher.vouchersSelected); console.log('vouchersSelected:', vouchersSelected)
+  const user = useSelector(state => state.user);
+  const vouchersSelected = useSelector(state => state.voucher.vouchersSelected);
 
   const vouchersRemainAfterUse = useMemo(() => {
     const idsVouSelected = vouchersSelected.map(vouSelected => vouSelected._id)
     return user.listVouchers.filter(vouId => !idsVouSelected.includes(vouId))
   },[])
 
-  console.log(vouchersRemainAfterUse)
 
   useEffect(() => {
     dispatch(removeAllOrderProduct(
@@ -50,7 +49,7 @@ export default function OrderSuccessPage() {
   return (
     <>
       <HeaderComponent nameHeader = 'Thành công' isHiddenSearch={true} isHiddenCart={true}/>
-      <div style={{padding: "10px 150px", backgroundColor:"#efefef" , height:"100vh"}}>
+      <div style={{padding: "10px 130px", backgroundColor:"#efefef" , height:"100vh"}}>
         <WrapperOrderSuccess>
           <WrapperLeftSuccess>
               <WrapperContainerSuccess>
@@ -78,26 +77,29 @@ export default function OrderSuccessPage() {
               </WrapperContainerSuccess>
           </WrapperLeftSuccess>
           <WrapperRightSuccess>
-              <div className="order-header">
-                <div className="order-header__title">Mã đơn hàng : {state?.codeOrder}</div>
-                <div 
-                  className="order-header__link"
-                  onClick={() => navigate(`/customer/view-detail?id=${state?._id}`)}
-                >
-                  Xem đơn hàng
-                </div>
+            <div className="order-email">
+              <div>Thông tin chi tiết đơn hàng {state?.codeOrder} đã được gửi đến email <b>{user.email}</b></div>
+            </div>
+            <div className="order-header">
+              <div className="order-header__title">Mã đơn hàng : {state?.codeOrder}</div>
+              <div 
+                className="order-header__link"
+                onClick={() => navigate(`/customer/view-detail?id=${state?._id}`)}
+              >
+                Xem đơn hàng
               </div>
-              <div className="order-divider"></div>
-              <div className="order-body">
-                {state?.orderItems.map(item => (
-                  <div key={item?.product} className="order-body__item">
-                    <div className="item--image">
-                      <img style={{width:"48px", height:"48px" , objectFit: "contain"}} src={item?.image} alt="" />
-                    </div>
-                    <div className="item--name">{item?.name}</div>
+            </div>
+            <div className="order-divider"></div>
+            <div className="order-body">
+              {state?.orderItems.map(item => (
+                <div key={item?.product} className="order-body__item">
+                  <div className="order-body__item--image">
+                    <img style={{width:"48px", height:"48px" , objectFit: "contain"}} src={item?.image} alt="" />
                   </div>
-                ))}
-              </div>
+                  <div className="order-body__item--name">{item?.name}</div>
+                </div>
+              ))}
+            </div>
           </WrapperRightSuccess>
         </WrapperOrderSuccess>
       </div>

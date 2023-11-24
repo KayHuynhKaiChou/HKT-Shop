@@ -36,7 +36,7 @@ export default function AdminProduct() {
         newType: '',
         discount: '',
     })
-    const [stateProduct, setStateProduct] = useState(inittial()); console.log(stateProduct)
+    const [stateProduct, setStateProduct] = useState(inittial());
     const [keyTab, setKeyTab] = useState('');
     const [isOnChangeQuill , setIsOnChangeQuill] = useState(false); // lí do có thằng này là vì khi edit 1 product , ta sẽ form.setFieldsValue , khi đó
     // react-quill sẽ đc set value và onChange của quill sẽ thực thi , onChange của react-quill khác với onChange của input là chỉ cần thay đổi value là đã gọi onChange rồi
@@ -242,10 +242,10 @@ export default function AdminProduct() {
               onFilter: ([start,end], record) => (end ? (record.price <= end && record.price >= start) : (record.price >= start)),
         },
         {
-            title: 'Tỷ lệ',
-            dataIndex: 'rating',
+            title: 'Đã bán',
+            dataIndex: 'selled',
             align: 'center',
-            sorter: (a,b) => a.rating - b.rating
+            sorter: (a,b) => a.selled - b.selled
         },
         {
             title: 'Danh mục',
@@ -288,11 +288,18 @@ export default function AdminProduct() {
     },[products,typesProduct])
 
     const productsByTypeExcel = useMemo(() => {
-        const productsByType = products?.filter(product => product.type === keyTab);
-        return productsByType?.map(product => {
-            const {__v,createdAt,updatedAt, ...field} = product
-            return field
-        })
+        if(keyTab === 'Tất cả'){
+            return products?.map(product => {
+                const {__v,createdAt,updatedAt, ...field} = product
+                return field
+            })
+        }else{
+            const productsByType = products?.filter(product => product.type === keyTab);
+            return productsByType?.map(product => {
+                const {__v,createdAt,updatedAt, ...field} = product
+                return field
+            })
+        }
     },[keyTab])
 
     const columnsExcel = useMemo(() => {
@@ -556,9 +563,9 @@ export default function AdminProduct() {
                 bodyStyle={{paddingBottom: 10}}
                 extra={
                     <Space>
-                        <Button onClick={handleCloseDraw}>Cancel</Button>
+                        <Button onClick={handleCloseDraw}>Hủy</Button>
                         <Button onClick={handleUpdateProduct} type="primary">
-                            Submit
+                            Cập nhật
                         </Button>
                     </Space>
                 }
