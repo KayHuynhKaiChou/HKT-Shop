@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import nodemailer from 'nodemailer'
-import { convertDateAndTime, convertPrice } from '../../../client/src/utils/utils.js';
+import { convertDateAndTime, convertPrice } from '../utils/util.js';
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",

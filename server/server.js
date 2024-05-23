@@ -12,9 +12,9 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
 
-
+//https://hkt-shop.vercel.app
 app.use(cors({
-    origin : 'http://localhost:4000',
+    origin : process.env.URL_CLIENT,
     credentials : true
 }));
 //PayloadTooLargeError: request entity too large , lỗi này ở phần set avatar bằng 

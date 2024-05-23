@@ -24,7 +24,8 @@ export const CardCustome = styled(Card)`
             display: block;
             position: absolute;
             top: 25%;
-            right: 23%;
+            right: 50%;
+            transform: translateX(50%);
         }
     }
     

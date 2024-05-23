@@ -2,9 +2,16 @@ import { styled } from "styled-components";
 
 export const WrapperAdmin = styled.div`
     display: flex;
+    justify-content: flex-end;
+    min-height: 100vh;
 
-    .menu{
-        width : 20%;
+    .menu {
+        width: 20%;
+        background: #001529;
+        position: fixed;
+        left: 0;
+        height: 100vh;
+        
         .title-header{
             background: #001529;
             padding: 20px 16px;
@@ -29,7 +36,7 @@ export const WrapperAdmin = styled.div`
 
 export const WrapperManageObject = styled.div`
     width : 80%;
-    height: 100vh;
+    //height: 100vh;
 
     .kGwyCy {
         padding : 10px !important;

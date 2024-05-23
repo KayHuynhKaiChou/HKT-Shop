@@ -8,10 +8,7 @@ dotenv.config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), nodePolyfills()],
-  define: {
-    "global": {},
-  }
+  plugins: [react(), nodePolyfills()]
   ,
   optimizeDeps: {
     exclude: ['bcrypt'],

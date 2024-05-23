@@ -101,7 +101,7 @@ export default function AdminProduct() {
                 dispatch(updateTypesList([...typesProduct, {name : stateProduct.newType , image : stateProduct.image}]))
             }
             message.success(`Thêm sản phẩm mới thành công`);
-            handleCancelCreate();
+            handleCloseModal();
         }else if(isError){
             message.error(`Có trường thông tin sản phẩm ko hợp lệ`);
         }

@@ -97,6 +97,11 @@ export const WrapperQuantityChoose = styled.div`
             width: 40px;
             border: 1px solid rgb(236, 236, 236);
             text-align : center;
+            outline: none;
+
+            &:focus{
+                border: 1px solid #c0c0c0;
+            }
         }
     }
 

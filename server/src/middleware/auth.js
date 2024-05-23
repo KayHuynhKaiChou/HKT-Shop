@@ -23,8 +23,8 @@ export const authUser = async (req,res,next) => {
             req.userId = payload._id;
             next();
         }else{
-            res.status(403).json({
-                status : 403,
+            res.status(401).json({
+                status : 401,
                 error : "unauthorized",
                 message : ""
             })

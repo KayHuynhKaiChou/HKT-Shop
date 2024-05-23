@@ -30,7 +30,12 @@ export default function CardComponent(props) {
     }
     
     return (
-        <Tooltip color='red' title={<div className='number-pro-0'>Hết hàng</div>} trigger={countInStock === 0 ? 'hover' : null} placement='top'>
+        <Tooltip 
+            color='red' 
+            title={<div className='number-pro-0'>Hết hàng</div>} 
+            trigger={countInStock === 0 ? 'hover' : null} 
+            placement='top'
+        >
             <CardCustome
                 hoverable           
                 bodyStyle={{ padding: "10px"}}

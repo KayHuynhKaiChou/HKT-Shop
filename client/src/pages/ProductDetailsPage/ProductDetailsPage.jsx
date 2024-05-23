@@ -18,12 +18,10 @@ import parse from 'html-react-parser';
 
 export default function ProductDetailsPage() {
   const user = useSelector((state) => state.user);
-  const order = useSelector(state => state.order); 
   const navigate = useNavigate();
   const [clickBuyToShowModal, setClickBuyToShowModal] = useState(false);
   const {type,id} = useParams();
   const [amountBuy , setAmountBuy] = useState(1);
-  const addressUser = useSelector(state => state?.user?.address);
   const dispatch = useDispatch();
   const [visiblePopoverCart , setVisiblePopoverCart] = useState(0);
 
@@ -100,7 +98,9 @@ export default function ProductDetailsPage() {
         setClickBuyToShowModal={setClickBuyToShowModal}
       />
       <LoadingComponent delay={0} isloading={!(isSuccessProductDetails && isSuccessProductsByType)}>
-      {!(isSuccessProductDetails && isSuccessProductsByType) ? <Empty description={'Đang tải thông tin sản phẩm'}/> : (
+      {!(isSuccessProductDetails && isSuccessProductsByType) 
+      ? <Empty description={'Đang tải thông tin sản phẩm'}/> 
+      : (
         <div style={{padding:"10px 120px", backgroundColor:"#efefef"}}>
           <PathProductComponent typePro = {type} namePro = {productDetails?.name}/>
           <Row style={{alignItems: "start"}}>
