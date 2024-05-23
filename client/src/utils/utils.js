@@ -123,8 +123,6 @@ export const initFacebookSDK = () => {
 
 
 export const exportExcel = (columns , dataTable , fileName) => {
-  console.log(columns);
-  console.log(dataTable);
     downloadExcel({
       fileName,
       sheet: "react-export-table-to-excel",
@@ -161,7 +159,6 @@ export const isExpiredVoucher = (expiredDate) => {
 }
 
 export const handleChangeAmountBuy = (action , amountChange , amountRemain ) => {
-  console.log(amountChange)
   if(amountChange){
     switch (action) {
         case 'INCREASE':

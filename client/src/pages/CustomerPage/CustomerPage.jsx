@@ -26,7 +26,7 @@ export default function CustomerPage() {
         getItem(<span>{'Đơn hàng của tôi'}</span>, 'my-order', <SolutionOutlined style={{fontSize:"20px",marginRight: '13px'}}/>),
         getItem(<span>{'Đổi mật khẩu'}</span>, 'change-password', <AiOutlineLock style={{fontSize:"20px",marginRight: '13px'}}/>),
         getItem(<span>{'Sổ địa chỉ'}</span>, 'my-address', <BiMap style={{fontSize:"20px",marginRight: '13px'}}/>),
-        getItem(<span>{'Thanh toán'}</span>, 'my-payment', <BiMap style={{fontSize:"20px",marginRight: '13px'}}/>),
+        getItem(<span>{'Thanh toán'}</span>, 'my-payment', <BsCreditCard2Back style={{fontSize:"20px",marginRight: '13px'}}/>),
         getItem(<span>{'Kho voucher'}</span>, 'my-voucher', <BiSolidDiscount style={{fontSize:"20px",marginRight: '13px'}}/>),
     ];
 

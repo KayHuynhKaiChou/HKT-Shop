@@ -2,7 +2,6 @@ import { OrderUnpaidModel } from '../models/OrderUnpaidModel.js';
 import { ProductModel } from '../models/ProductModel.js';
 
 const checkCountInStock = async (cart) => {
-    console.log(cart)
     let response = {};
     if(cart.totalQuantity === 0) return response;
     const arrPromise = cart.orderItems.map(async (item) => {
@@ -87,7 +86,7 @@ const getOrderUnpaidByUser = async (idUser) => {
                     })
                 }
             } catch (error) {
-                console.log(error)
+            
                 reject(error)
             }
         }
@@ -141,7 +140,6 @@ const updateOrderUnpaid = async (idUser , updatedOrder) => {
                 }
 
             } catch (error) {
-                console.log(error)
                 reject(error)
             }
         }

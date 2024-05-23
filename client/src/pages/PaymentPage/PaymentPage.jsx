@@ -37,7 +37,7 @@ export default function PaymentPage() {
         return res;
     };
 
-    const queryAddressShip = useQuery(["addresses-ship-by-user-1"],fetchGetAddressShipByUser);
+    const queryAddressShip = useQuery(["addresses-ship-by-user-1"], fetchGetAddressShipByUser);
     const { data: listAddressShip, isSuccess: isSuccessListAddressShip } = queryAddressShip;
     queryAddressShip.refetch();
     
@@ -177,7 +177,7 @@ export default function PaymentPage() {
                                     </div>
                                     <div className="address-ship">
                                         <Tag color="success">{addressShipSelect?.type}</Tag>
-                                        {addressShipSelect?.addressDetail}, {addressShipSelect?.ward}, {addressShipSelect?.district.split('-')[0]}, {addressShipSelect?.province.split('-')[0]}
+                                        {addressShipSelect?.addressDetail}, {addressShipSelect?.ward}, {addressShipSelect?.district}, {addressShipSelect?.province}
                                     </div>
                                 </>
                             )}

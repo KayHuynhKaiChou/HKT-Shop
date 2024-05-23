@@ -145,6 +145,7 @@ export const WrapperRightSuccess = styled.div`
     
         &__link {
             color: rgb(11, 116, 229);
+            cursor: 'pointer';
         }
     }
 

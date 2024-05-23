@@ -57,6 +57,7 @@ export const WrapperCategories = styled.div`
         }
 
         .cate-item__name{
+            text-transform: capitalize;
             word-break: break-word;
             font-size: 18px;
             line-height: 35px;

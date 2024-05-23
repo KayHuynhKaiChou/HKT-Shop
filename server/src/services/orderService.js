@@ -47,7 +47,6 @@ const createOrder = async (userId , order) => {
                     })
                 }
             } catch (error) {
-                console.log(error)
                 reject(error)
             }
         }

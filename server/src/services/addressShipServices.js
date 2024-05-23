@@ -45,7 +45,6 @@ const createAddressShip = async (userId, addressShip) => {
                     data : newAddressShip
                 })
             } catch (error) {
-                console.log(error)
                 reject(error)
             }
         }
@@ -86,7 +85,6 @@ const updateAddressShip = async (addressShip) => {
                     })
                 }
             } catch (error) {
-                console.log(error)
                 reject(error)
             }
         }

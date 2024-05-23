@@ -12,11 +12,13 @@ import * as userService from "../../services/UserService"
 import { toast } from 'react-toastify';
 import { updateUser } from "../../redux/slices/userSlice";
 import { WrapperEmptyVoucher } from "./style";
+import {useNavigate} from 'react-router-dom';
 
 export default function MyVouchersPage({isModalForm = false}) {
 
     const user = useSelector(state => state.user); 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     
     const fetchGetVoucherByUser = async (context) => {
@@ -85,7 +87,9 @@ export default function MyVouchersPage({isModalForm = false}) {
                         fill='%23E8E8E8' /%3E%3C/svg%3E"/>
                         <div className="content-main">Kho voucher của bạn đang trống</div>
                         <div className="content-support">Tìm các voucher hấp dẫn đang chờ bạn</div>
-                        <button>Tìm voucher</button>
+                        <button
+                            onClick={() => navigate('/voucher')}
+                        >Tìm voucher</button>
                     </div>
                 </WrapperEmptyVoucher>
             ) : (

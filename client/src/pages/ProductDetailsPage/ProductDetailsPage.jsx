@@ -16,6 +16,7 @@ import LoadingComponent from "../../components/LoadingComponent/LoadingComponent
 import { BsFillCartPlusFill } from "react-icons/bs";
 import parse from 'html-react-parser';
 
+
 export default function ProductDetailsPage() {
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();

@@ -46,7 +46,6 @@ const createUser = async (newUser) => {
                     data : newUser
                 });                
             } catch (error) {
-                console.log(error)
                 reject(error);
             }
         }
@@ -238,7 +237,6 @@ const changePassword = async (userId, oldPass , newPass) => {
                     }
                 }
             } catch (error) {
-                console.log(error)
                 reject(error)
             }           
         }

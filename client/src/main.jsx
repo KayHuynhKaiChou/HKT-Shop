@@ -12,6 +12,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { PersistGate } from 'redux-persist/integration/react'
 import {persistor} from './redux/store'
 import { BrowserRouter } from 'react-router-dom'
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify'
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -19,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
+          <ToastContainer/>
           <App/>
         </BrowserRouter>
       </PersistGate>
