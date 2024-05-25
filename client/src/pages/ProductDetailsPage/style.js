@@ -5,7 +5,7 @@ export const WrapperImgProduct = styled(Col)`
     padding-right : 15px;
     border-right : 1px solid rgb(242, 242, 242);
     position: sticky; // muốn thằng sticky này hoạt động thì thằng cha set align-items : start khi cha display : flex;
-    top: 5px; 
+    top: 80px; 
 
     .ant-image{
         background-color : #fff;

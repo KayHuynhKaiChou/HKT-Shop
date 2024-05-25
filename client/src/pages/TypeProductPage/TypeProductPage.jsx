@@ -6,8 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import * as productService from '../../services/ProductService'
 import PathProductComponent from "../../components/PathProductComponent/PathProductComponent";
 import { useSelector } from "react-redux";
-import { getItem } from "../../utils/utils";
-import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
+import { convertUTF8toUnicode, getItem } from "../../utils/utils";
 
 export default function TypeProductPage() {
   const [isLoading , setIsLoading] = useState(true);
@@ -56,7 +55,8 @@ export default function TypeProductPage() {
   },[typesProduct?.length])
 
   const handleConvertType = ({key}) => {
-    navigate(`/product/${key.normalize('NFD').replace(/[\u0300-\u036f]/g, '')?.replace(/ /g, '_')}` , {state : key})
+    const typeFormat = convertUTF8toUnicode(key).split(' ').join('-')
+    navigate(`/product/${typeFormat}` , {state : key})
   }
 
   return (

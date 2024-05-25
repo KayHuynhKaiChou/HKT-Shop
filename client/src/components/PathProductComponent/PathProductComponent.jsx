@@ -1,11 +1,12 @@
 import {HomeOutlined, RightOutlined} from '@ant-design/icons'
 import { WrapperPathProduct } from './style'
 import { useNavigate } from 'react-router-dom'
+import { convertUTF8toUnicode } from '../../utils/utils';
 
 export default function PathProductComponent(props) {
     const navigate = useNavigate();
-    // eslint-disable-next-line react/prop-types
-    const { typePro = '' , namePro = '' } = props
+    const { typePro = '' , namePro = '' } = props;
+    const typeFormat = convertUTF8toUnicode(typePro).split(' ').join('-')
 
     return (
         <WrapperPathProduct>
@@ -14,7 +15,7 @@ export default function PathProductComponent(props) {
                 Trang chủ
             </div>
             <RightOutlined /> 
-            <div className="path link-active" onClick={() => navigate(`/product/${typePro.normalize('NFD').replace(/[\u0300-\u036f]/g, '')?.replace(/ /g, '_')}`,{state : typePro})}>{typePro}</div>
+            <div className="path link-active" onClick={() => navigate(`/product/${typeFormat}`,{state : typePro})}>{typePro}</div>
             {namePro && <RightOutlined/>}
             {namePro && <div className="path">{namePro}</div>}
         </WrapperPathProduct>

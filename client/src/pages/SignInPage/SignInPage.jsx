@@ -5,17 +5,15 @@ import * as userService from '../../services/UserService'
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { useEffect} from "react";
 import jwt_decode from 'jwt-decode'
-import {useNavigate, useParams} from 'react-router-dom'
-import { useDispatch} from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { updateUser } from "../../redux/slices/userSlice";
 import { useForm } from "antd/es/form/Form";
 import { LockOutlined } from "@ant-design/icons";
 import { CiMail } from "react-icons/ci";
 
 export default function SignInPage({form = useForm , setTypeForm}) {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {type,id} = useParams(); // đây là id product bên page detail product
   const {email , password} = form.getFieldsValue();
 
   const mutation = useMutationHooks(
@@ -31,11 +29,18 @@ export default function SignInPage({form = useForm , setTypeForm}) {
   useEffect(() => {
     if(isSuccess && data?.status === 'OK'){
       form.resetFields();
-      if(!id){
-        navigate('/');
-      }else{
-        navigate(`/product-details/${type}/${id}`)
-      }
+      // if(!id){
+      //   navigate('/');
+      // }else{
+      //   const typeFormat = convertUTF8toUnicode(type).split(' ').join('-')
+      //   const nameFormat = convertUTF8toUnicode(name).split(' ').join('-')
+      //   navigate(`/product-details/${typeFormat}/${nameFormat}` , { 
+      //     state : {
+      //       id,
+      //       type
+      //     }
+      //   })
+      // }
       if(data?.accessToken){
         localStorage.setItem('accessToken',data?.accessToken);
         const decoded = jwt_decode(data?.accessToken);

@@ -22,7 +22,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['order','user'] // cho phép redux này KO được lưu trong storage , thiệt ra user cx ko cần lưu vì kể cả reload lại thì app.jsx chạy first cx sẽ lấy đc user
+  blacklist: [] // cho phép slice này KO được lưu trong storage 
 }
 
 const rootReducer = combineReducers({

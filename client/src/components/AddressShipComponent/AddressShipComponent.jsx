@@ -1,7 +1,7 @@
 import {AiOutlinePlus } from 'react-icons/ai'
 import { Button, Input, Modal, Select , Form, Checkbox, Radio, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
-import { getListDistricts, getListProvincesCity, getListWards, toastMSGObject} from '../../utils/utils';
+import { toastMSGObject} from '../../utils/utils';
 import { getAddressShipsByUser , createAddressShip, updateAddressShip, deleteAddressShip } from '../../services/UserService';
 import { useMutation, useQuery} from '@tanstack/react-query';
 import { toast } from 'react-toastify';
@@ -34,8 +34,8 @@ export default function AddressShipComponent() {
   });
   const [isFormEdit , setIsFormEdit] = useState(false);
 
-
   const handleCancelModal = () => {
+    setIsFormEdit(false);
     setIsOpenModal(false);
     form.resetFields();
     setListDistricts([]);
@@ -57,38 +57,46 @@ export default function AddressShipComponent() {
     })
   }
 
-  const handleOnChangeProvince = async (nameCity , value) => {
+  const handleOnChangeProvince = async (nameProvince , value) => {
+    const updatedProvince = (nameProvince && value) ? `${nameProvince}-${value.key}` : ''
+    const updatedDistrict = updatedProvince ? addressShipping.district : ''
+    const updatedWard = updatedDistrict ? addressShipping.ward : ''
     setAddressShipping({
       ...addressShipping ,
-      province : nameCity + '-' + value.key,
-      district : '',
-      ward : ''
+      province : updatedProvince,
+      district : updatedDistrict,
+      ward : updatedWard
     })
-    if(nameCity){
+    if(!nameProvince){
       setListDistricts([]);
       setListWards([]);
       form.setFieldsValue({
         district : "",
         ward : ""
       })
+    }else{
+      //setListDistricts(await getListDistricts(value.key))
+      setListDistricts(districts.filter(district => district.province_id == value.key))
     }
-    //setListDistricts(await getListDistricts(value.key))
-    setListDistricts(districts.filter(district => district.province_id == value.key))
   }
 
   const handleOnChangeDistrict = async (nameDistrict , value) => {
+    const updatedDistrict = (nameDistrict && value) ? `${nameDistrict}-${value.key}` : ''
+    const updatedWard = updatedDistrict ? addressShipping.ward : ''
     setAddressShipping({
       ...addressShipping ,
-      district : nameDistrict + '-' + value.key
+      district : updatedDistrict,
+      ward : updatedWard
     })
-    if(nameDistrict){
+    if(!nameDistrict){
       setListWards([]);
       form.setFieldsValue({
         ward : ""
       })
+    }else{
+      //setListWards(await getListWards(value.key));
+      setListWards(wards.filter(ward => ward.district_id == value.key))
     }
-    //setListWards(await getListWards(value.key));
-    setListWards(wards.filter(ward => ward.district_id == value.key))
   }
 
   const handleOnChangeWard = async (nameWard) => {
@@ -164,7 +172,7 @@ export default function AddressShipComponent() {
 
   const handleEditAddressShip = () => {
     mutationEditAddress.mutate({
-      ...form.getFieldValue(),
+      ...addressShipping,
       default : addressShipping.default
     } , {
       onSettled : () => {
@@ -239,7 +247,12 @@ export default function AddressShipComponent() {
           handleShowDetailAddressShip={handleShowDetailAddressShip}
         />
       ))}
-      <Modal title={isFormEdit ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"} open={isModalOpen} footer={null} onCancel={handleCancelModal}>
+      <Modal 
+        title={isFormEdit ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"} 
+        open={isModalOpen} 
+        footer={null} 
+        onCancel={handleCancelModal}
+      >
         <Form
           name="wrap"
           form={form}

@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { WrapperDescribe, WrapperDetailBody, WrapperDetailHeader, WrapperDetailProduct, WrapperImgProduct, WrapperProductsByCategory, WrapperQuantityChoose } from "./style";
 import { Button, Empty, Image, Row} from "antd";
@@ -21,7 +21,7 @@ export default function ProductDetailsPage() {
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [clickBuyToShowModal, setClickBuyToShowModal] = useState(false);
-  const {type,id} = useParams();
+  const { state : {id, type}} = useLocation();
   const [amountBuy , setAmountBuy] = useState(1);
   const dispatch = useDispatch();
   const [visiblePopoverCart , setVisiblePopoverCart] = useState(0);
@@ -99,90 +99,90 @@ export default function ProductDetailsPage() {
         setClickBuyToShowModal={setClickBuyToShowModal}
       />
       <LoadingComponent delay={0} isloading={!(isSuccessProductDetails && isSuccessProductsByType)}>
-      {!(isSuccessProductDetails && isSuccessProductsByType) 
-      ? <Empty description={'Đang tải thông tin sản phẩm'}/> 
-      : (
-        <div style={{padding:"10px 120px", backgroundColor:"#efefef"}}>
-          <PathProductComponent typePro = {type} namePro = {productDetails?.name}/>
-          <Row style={{alignItems: "start"}}>
-            <WrapperImgProduct span={8}>
-              <Image width="100%" preview={false} src={productDetails?.image} />
-            </WrapperImgProduct>
-            <WrapperDetailProduct span={16}>
-              <WrapperDetailHeader>
-                  <h1>{productDetails?.name}</h1>
-                  <div className="have-sold">Đã bán {productDetails?.selled}</div>
-              </WrapperDetailHeader>
-              <WrapperDetailBody>
-                  <div className="price">
-                    <div className="price-final">
-                      {convertPrice(calculatePriceFinal(productDetails?.price , productDetails?.discount))}
-                    </div>
-                    <div className="price-discount">
-                      -{productDetails?.discount}%
-                    </div>
-                  </div>
-                  <LikeButtonComponent 
-                  //https://developers.facebook.com/docs/plugins/
-                    dataHref={'https://developers.facebook.com/docs/plugins/'} 
-                  />
-                  <WrapperQuantityChoose>
-                    <h3>Số lượng</h3>
-                    <div className="action-num-pro">
-                      <button 
-                        className="decrease" 
-                        disabled={amountBuy<=1} 
-                        onClick={() => handleSetAmountProduct('DECREASE',amountBuy-1) }
-                      >
-                        <img src="https://frontend.tikicdn.com/_desktop-next/static/img/pdp_revamp_v2/icons-remove.svg" alt="" />
-                      </button>
-                      <input 
-                        value={amountBuy} 
-                        type="number" 
-                        name="amountBuy" 
-                        onChange={(e) => handleSetAmountProduct('INPUT',+e.target.value)}
-                      />
-                      <button 
-                        className="increase" 
-                        disabled={amountBuy>=999} 
-                        onClick={() => handleSetAmountProduct('INCREASE',amountBuy+1)}
-                      >
-                        <img src="https://frontend.tikicdn.com/_desktop-next/static/img/pdp_revamp_v2/icons-add.svg" alt="" />
-                      </button>
-                      {productDetails?.countInStock <= 5 ? (
-                        <span className="count-in-stock">{`Chỉ còn lại ${productDetails?.countInStock} sản phẩm`}</span>
-                      ) : null}
-                    </div>
-                    {!user.isAdmin && (
-                      <div className="group-button">
-                          <Button className="buy-action" onClick={handleBuySelectedProduct}>
-                              Mua ngay
-                          </Button>
-                          <Button className="buy-before" onClick={handleAddProductToOrder}>
-                            <BsFillCartPlusFill style={{fontSize:'18px', marginRight:5}}/>
-                            Thêm vào giỏ hàng
-                          </Button>
+        {!(isSuccessProductDetails && isSuccessProductsByType) 
+        ? <Empty description={'Đang tải thông tin sản phẩm'}/> 
+        : (
+          <div style={{padding:"10px 120px", backgroundColor:"#efefef"}}>
+            <PathProductComponent typePro = {type} namePro = {productDetails?.name}/>
+            <Row style={{alignItems: "start"}}>
+              <WrapperImgProduct span={8}>
+                <Image width="100%" preview={false} src={productDetails?.image} />
+              </WrapperImgProduct>
+              <WrapperDetailProduct span={16}>
+                <WrapperDetailHeader>
+                    <h1>{productDetails?.name}</h1>
+                    <div className="have-sold">Đã bán {productDetails?.selled}</div>
+                </WrapperDetailHeader>
+                <WrapperDetailBody>
+                    <div className="price">
+                      <div className="price-final">
+                        {convertPrice(calculatePriceFinal(productDetails?.price , productDetails?.discount))}
                       </div>
-                    )}
-                  </WrapperQuantityChoose>
-              </WrapperDetailBody>
-              <WrapperDescribe>
-                <div className="describe-title">Mô tả sản phẩm</div>
-                <div className="describe-content">{parse(productDetails?.description)}</div>
-              </WrapperDescribe>
-              <WrapperProductsByCategory>
-                <div className="category-title" >Sản phẩm liên quan</div>
-                <SliderComponent list={productsByType} nameList = {'products-category'} ></SliderComponent>
-              </WrapperProductsByCategory>
-              <CommentComponent
-              //"https://developers.facebook.com/docs/plugins/comments#configurator" 
-                dataHref={"https://developers.facebook.com/docs/plugins/comments#configurator"} 
-                //width="1270" 
-              />
-            </WrapperDetailProduct>
-          </Row>
-        </div>
-      )}
+                      <div className="price-discount">
+                        -{productDetails?.discount}%
+                      </div>
+                    </div>
+                    <LikeButtonComponent 
+                    //https://developers.facebook.com/docs/plugins/
+                      dataHref={'https://developers.facebook.com/docs/plugins/'} 
+                    />
+                    <WrapperQuantityChoose>
+                      <h3>Số lượng</h3>
+                      <div className="action-num-pro">
+                        <button 
+                          className="decrease" 
+                          disabled={amountBuy<=1} 
+                          onClick={() => handleSetAmountProduct('DECREASE',amountBuy-1) }
+                        >
+                          <img src="https://frontend.tikicdn.com/_desktop-next/static/img/pdp_revamp_v2/icons-remove.svg" alt="" />
+                        </button>
+                        <input 
+                          value={amountBuy} 
+                          type="number" 
+                          name="amountBuy" 
+                          onChange={(e) => handleSetAmountProduct('INPUT',+e.target.value)}
+                        />
+                        <button 
+                          className="increase" 
+                          disabled={amountBuy>=999} 
+                          onClick={() => handleSetAmountProduct('INCREASE',amountBuy+1)}
+                        >
+                          <img src="https://frontend.tikicdn.com/_desktop-next/static/img/pdp_revamp_v2/icons-add.svg" alt="" />
+                        </button>
+                        {productDetails?.countInStock <= 5 ? (
+                          <span className="count-in-stock">{`Chỉ còn lại ${productDetails?.countInStock} sản phẩm`}</span>
+                        ) : null}
+                      </div>
+                      {!user.isAdmin && (
+                        <div className="group-button">
+                            <Button className="buy-action" onClick={handleBuySelectedProduct}>
+                                Mua ngay
+                            </Button>
+                            <Button className="buy-before" onClick={handleAddProductToOrder}>
+                              <BsFillCartPlusFill style={{fontSize:'18px', marginRight:5}}/>
+                              Thêm vào giỏ hàng
+                            </Button>
+                        </div>
+                      )}
+                    </WrapperQuantityChoose>
+                </WrapperDetailBody>
+                <WrapperDescribe>
+                  <div className="describe-title">Mô tả sản phẩm</div>
+                  <div className="describe-content">{parse(productDetails?.description)}</div>
+                </WrapperDescribe>
+                <WrapperProductsByCategory>
+                  <div className="category-title" >Sản phẩm liên quan</div>
+                  <SliderComponent list={productsByType} nameList = {'products-category'} ></SliderComponent>
+                </WrapperProductsByCategory>
+                <CommentComponent
+                //"https://developers.facebook.com/docs/plugins/comments#configurator" 
+                  dataHref={"https://developers.facebook.com/docs/plugins/comments#configurator"} 
+                  //width="1270" 
+                />
+              </WrapperDetailProduct>
+            </Row>
+          </div>
+        )}
       </LoadingComponent>
     </>
   )

@@ -27,9 +27,10 @@ export const WrapperVoucherBackground = styled.div`
 
 export const WrapperVouchers = styled(Row)`
     border-radius: 5px;
+    width: 100%;
 
     .voucher-empty{
-        margin-bottom: 40px;
+        margin: auto;
     }
 
     .voucher-item{

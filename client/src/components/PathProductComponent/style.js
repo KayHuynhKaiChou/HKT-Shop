@@ -11,6 +11,7 @@ export const WrapperPathProduct = styled.div`
         line-height: 20px;
         font-weight: 300;
         white-space: nowrap;
+        text-transform: capitalize;
     }
 
     .anticon.anticon-right{

@@ -9,6 +9,7 @@ import rightArrow from '../../assets/images/right-arrow.svg'
 import { useNavigate } from 'react-router-dom'
 import { SliderCategories, SliderImages } from './style'
 import CardComponent from '../CardComponent/CardComponent'
+import { convertUTF8toUnicode } from '../../utils/utils'
 
 export default function SliderComponent({list = [slider1,slider2,slider3,slider4] , nameList = 'images'}) {
 
@@ -57,12 +58,15 @@ export default function SliderComponent({list = [slider1,slider2,slider3,slider4
             case 'types-product':
                 return (
                     <SliderCategories {...settings}>
-                        {list?.map((type,i) => (
-                            <div className='cate-item' key={i} onClick={() => navigate(`/product/${type?.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '')?.replace(/ /g, '_')}`, {state: type?.name})}>
-                                <img src={type?.image} />
-                                <div className='cate-item__name'>{type?.name}</div>
-                            </div>
-                        ))}
+                        {list?.map((type,i) => {
+                            const typeFormat = convertUTF8toUnicode(type?.name).split(' ').join('-')
+                            return (
+                                <div className='cate-item' key={i} onClick={() => navigate(`/product/${typeFormat}`, {state: type?.name})}>
+                                    <img src={type?.image} />
+                                    <div className='cate-item__name'>{type?.name}</div>
+                                </div>
+                            )
+                        })}
                     </SliderCategories>
                 )
             case 'products-sellest':

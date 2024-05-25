@@ -31,7 +31,7 @@ class addressShipController {
 
     updateAddressShip = async (req, res) => {
         try {
-            const response = await updateAddressShip(req.body);
+            const response = await updateAddressShip(req.userId , req.body);
             if(response.status === 400){
                 return res.status(400).json(response)
             }

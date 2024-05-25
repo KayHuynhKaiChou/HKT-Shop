@@ -14,6 +14,7 @@ import * as productService from '../../services/ProductService'
 import { useQuery } from '@tanstack/react-query';
 import { resetOrder } from '../../redux/slices/orderSlice';
 import * as userService from '../../services/UserService'
+import { convertUTF8toUnicode } from '../../utils/utils';
 
 export default function HeaderComponent(props) {
   const {
@@ -108,7 +109,14 @@ export default function HeaderComponent(props) {
 
   const handleRedirectToProduct = (value) => {
     const p = products?.find(product => product.name === value)
-    navigate(`/product-details/${p.type}/${p._id}`)
+    const typeFormat = convertUTF8toUnicode(p.type).split(' ').join('-')
+    const nameFormat = convertUTF8toUnicode(p.name).split(' ').join('-')
+    navigate(`/product-details/${typeFormat}/${nameFormat}` , { 
+      state : {
+        id : p.id,
+        type : p.type
+      }
+    })
   }
 
   useEffect(() => {
@@ -124,6 +132,7 @@ export default function HeaderComponent(props) {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setClickBuyToShowModal(false);
     formLogin.resetFields();
     formRegister.resetFields();
   }
@@ -202,7 +211,10 @@ export default function HeaderComponent(props) {
         </Col>
       </WrapperHeader>
       <CustomModal width="727px" title={null} footer={null} open={clickBuyToShowModal || isModalOpen} onCancel={handleCloseModal}>        
-          {typeForm === 'sign-in' ? <SignInPage form={formLogin} setTypeForm={setTypeForm} /> : <SignUpPage form={formRegister} setIsModalOpen={setIsModalOpen} setTypeForm={setTypeForm}/> }   
+          {typeForm === 'sign-in' 
+          ? <SignInPage form={formLogin} setTypeForm={setTypeForm} /> 
+          : <SignUpPage form={formRegister} setIsModalOpen={setIsModalOpen} setTypeForm={setTypeForm}/> 
+          }   
       </CustomModal>
     </>
   )

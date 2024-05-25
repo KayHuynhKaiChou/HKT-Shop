@@ -190,3 +190,13 @@ export const handleChangeAmountBuy = (action , amountChange , amountRemain ) => 
 export function calculatePriceFinal ( firstPrice , discount ) {
   return discount === 0 ? firstPrice : firstPrice - (firstPrice * discount) / 100
 }
+
+export const convertUTF8toUnicode = (textVietnam) => {
+  return textVietnam.normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')  // Loại bỏ các dấu
+                    .replace(/đ/g, 'd')              // Thay thế chữ 'đ'
+                    .replace(/Đ/g, 'D')             // Thay thế chữ 'Đ'
+                    .replace(/[^a-zA-Z0-9\s]/g, '')          // Loại bỏ các ký tự đặc biệt
+                    .replace(/\s+/g, ' ')                    // Loại bỏ khoảng trắng thừa
+                    .trim();                                 // Loại bỏ khoảng trắng ở đầu và cuối
+}

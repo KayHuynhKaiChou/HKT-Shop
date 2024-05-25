@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { TypePro, WrapperTypesProduct } from "./style"
 import * as productService from '../../services/ProductService'
 import { useNavigate } from "react-router-dom";
+import { convertUTF8toUnicode } from "../../utils/utils";
 
 export default function TypeProductComponent() {
 
@@ -15,8 +16,9 @@ export default function TypeProductComponent() {
     return (
       <WrapperTypesProduct>
         {typesProduct?.map((type,i) => {
+          const typeFormat = convertUTF8toUnicode(type).split(' ').join('-');
           return (
-              <TypePro onClick={() => navigate(`/product/${type.normalize('NFD').replace(/[\u0300-\u036f]/g, '')?.replace(/ /g, '_')}`, {state: type})} key={i}>{type}</TypePro>
+            <TypePro onClick={() => navigate(`/product/${typeFormat}`, {state: type})} key={i}>{type}</TypePro>
           )
         })}
       </WrapperTypesProduct>

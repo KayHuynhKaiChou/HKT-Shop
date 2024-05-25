@@ -1,4 +1,4 @@
-import { Button,Modal,Radio, Tag} from "antd";
+import { Button,Empty,Modal,Radio, Tag} from "antd";
 import { WrapperCartPrice } from "../OrderPage/style";
 import { CustomRadio, WrapperAddressShip, WrapperLeft, WrapperMethods, WrapperPayment, WrapperRight, WrapperShipping } from "./style";
 import { useSelector } from "react-redux";
@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import AddressShipItem from '../../components/AddressShipComponent/AddressShipItem'
 import { WrapperAddressShipComponent } from "../../components/AddressShipComponent/style";
 import { ToastContainer, toast } from "react-toastify";
+import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 
 
 export default function PaymentPage() {
@@ -29,7 +30,8 @@ export default function PaymentPage() {
     const [payment , setPayment] = useState('LATER_MONEY')
     const [sdkReady , setSdkReady] = useState(false);
     const [isShowOrderSelected , setIsShowOrderSelected] = useState(false);
-    const [addressShipSelect, setAddressShipSelect] = useState({});
+    const [addressShipSelect, setAddressShipSelect] = useState(null);
+    const [isLoadingAddressShip , setIsLoadingAddressShip] = useState(true);
 
     // handle address ship
     const fetchGetAddressShipByUser = async () => {
@@ -39,13 +41,14 @@ export default function PaymentPage() {
 
     const queryAddressShip = useQuery(["addresses-ship-by-user-1"], fetchGetAddressShipByUser);
     const { data: listAddressShip, isSuccess: isSuccessListAddressShip } = queryAddressShip;
-    queryAddressShip.refetch();
+    //queryAddressShip.refetch();
     
     useEffect(() => {
         isSuccessListAddressShip &&
         setAddressShipSelect(
             listAddressShip?.find((as) => as.default)
         );
+        setIsLoadingAddressShip(false);
     }, [isSuccessListAddressShip, listAddressShip]);
 
     useEffect(() => {
@@ -109,7 +112,7 @@ export default function PaymentPage() {
         document.body.appendChild(script)
     }
 
-    const onSuccessPaypal = (details) => {
+    const onSuccessPaypal = () => {
         mutationAddOrder.mutate({
             orderItems: order?.orderItemsSelected, 
             deliveryMethod: delivery,
@@ -154,7 +157,7 @@ export default function PaymentPage() {
 
                     <WrapperRight>
                         <WrapperAddressShip>
-                            {listAddressShip?.length === 0 ? (
+                            {listAddressShip?.length == 0 ? (
                                 <div className="not-address">
                                     <div className="not-address__title">Hiện tại sổ địa chỉ của bạn đang trống</div>
                                     <div 
@@ -165,21 +168,28 @@ export default function PaymentPage() {
                                     </div>
                                 </div>
                             ) : (
-                                <>
-                                    <div className="block-header">
-                                        <div className="block-header__title">Giao tới</div>
-                                        <div className="block-header__nav" onClick={() => setIsOpenModalAddress(true)}>Thay đổi</div>
-                                    </div>
-                                    <div className="customer-info">
-                                        <div className="customer-info__name">{addressShipSelect?.fullName}</div>
-                                        <i></i>
-                                        <div className="customer-info__phone">{addressShipSelect?.phone}</div>
-                                    </div>
-                                    <div className="address-ship">
-                                        <Tag color="success">{addressShipSelect?.type}</Tag>
-                                        {addressShipSelect?.addressDetail}, {addressShipSelect?.ward}, {addressShipSelect?.district}, {addressShipSelect?.province}
-                                    </div>
-                                </>
+                                <LoadingComponent isloading={isLoadingAddressShip}>
+                                    {!addressShipSelect 
+                                        ? <Empty description="Đang load địa chỉ ..." /> 
+                                        : 
+                                    (
+                                        <>
+                                            <div className="block-header">
+                                                <div className="block-header__title">Giao tới</div>
+                                                <div className="block-header__nav" onClick={() => setIsOpenModalAddress(true)}>Thay đổi</div>
+                                            </div>
+                                            <div className="customer-info">
+                                                <div className="customer-info__name">{addressShipSelect?.fullName}</div>
+                                                <i></i>
+                                                <div className="customer-info__phone">{addressShipSelect?.phone}</div>
+                                            </div>
+                                            <div className="address-ship">
+                                                <Tag color="success">{addressShipSelect?.type}</Tag>
+                                                {addressShipSelect?.addressDetail}, {addressShipSelect?.ward}, {addressShipSelect?.district.split('-')[0]}, {addressShipSelect?.province.split('-')[0]}
+                                            </div>
+                                        </>
+                                    )}
+                                </LoadingComponent>
                             )}
                         </WrapperAddressShip>
                         <WrapperCartPrice>
@@ -247,7 +257,7 @@ export default function PaymentPage() {
                                 <div className="price-content">{convertPrice(priceFinal)}</div>
                             </div>
                         </WrapperCartPrice>
-                        {payment === 'paypal' && sdkReady ? (
+                        {payment === 'PAYPAL' && sdkReady ? (
                             <div style={{width:"100%",marginTop: '15px'}}>
                                 <PayPalButton
                                     amount={Math.round(priceFinal * 0.000041)}

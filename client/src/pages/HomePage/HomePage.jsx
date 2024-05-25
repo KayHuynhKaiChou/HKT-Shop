@@ -68,7 +68,7 @@ export default function HomePage() {
               <SliderComponent />
             </Col>
             <Col span={8} onClick={() => navigate('/voucher')}>
-              <Image style={{borderRadius:"10px"}} height={"100%"} src="https://thuvienmuasam.com/uploads/default/original/2X/1/1ae37050401d2baa4ed2fabfae2258dc01d83af3.jpeg" preview={false} />
+              <Image style={{borderRadius:"10px" , cursor:"pointer"}} height={"100%"} src="https://thuvienmuasam.com/uploads/default/original/2X/1/1ae37050401d2baa4ed2fabfae2258dc01d83af3.jpeg" preview={false} />
             </Col>
           </Row>
 

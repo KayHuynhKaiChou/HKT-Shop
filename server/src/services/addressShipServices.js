@@ -51,39 +51,35 @@ const createAddressShip = async (userId, addressShip) => {
     )
 }
 
-const updateAddressShip = async (addressShip) => {
+const updateAddressShip = async (userId, addressShip) => {
     return new Promise(
         async (resolve , reject) => {
-            try {               
-                const addressShipFind = await AddressShipModel.findById(addressShip.id)
-                if(addressShipFind.default){ // địa chỉ mặc định ban đầu
-                    // tiến hành update 1 địa chỉ mặc định
-                    if(addressShip.default){
-                        resolve({
-                            message : "Cập nhật địa chỉ ship thành công",
-                            success : true,
-                            updatedAddressShip : await AddressShipModel.findByIdAndUpdate(addressShip.id, addressShip,{new : true})
-                        })
-                    }else{
-                        resolve({
-                            timestamp : new Date(), 
-                            status : 400,
-                            error : "Bad request",
-                            message : "1 tài khoản phải có 1 địa chỉ mặc định"
-                        })
+            try {        
+                if(addressShip.default){    
+                    const foundOriginalAddressShip = await AddressShipModel.findById(addressShip.id)
+                    if(!foundOriginalAddressShip.default){ // update 1 địa chỉ KO default => default
+                        // Tìm địa chỉ default ban đầu và update lại thành KO default
+                        await AddressShipModel.findOneAndUpdate( 
+                            {
+                                userId ,
+                                default : true
+                            } , 
+                            {
+                                $set: { default : false}
+                            }
+                        )
                     }
-                }else{ // ko phải địa chỉ mặc định
-                    if(addressShip.default){
-                        await AddressShipModel.findOneAndUpdate( {default : true} , {
-                            $set: { default : false}
-                        })
-                    }
-                    resolve({
-                        message : "Cập nhật địa chỉ ship thành công",
-                        success : true,
-                        updatedAddressShip : await AddressShipModel.findByIdAndUpdate(addressShip.id, addressShip,{new : true})
-                    })
                 }
+                const updatedAddressShip = await AddressShipModel.findByIdAndUpdate(
+                    addressShip.id, 
+                    addressShip,
+                    {new : true}
+                )
+                resolve({
+                    message : "Cập nhật địa chỉ ship thành công",
+                    success : true,
+                    updatedAddressShip 
+                })
             } catch (error) {
                 reject(error)
             }

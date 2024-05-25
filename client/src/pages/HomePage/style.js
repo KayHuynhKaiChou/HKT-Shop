@@ -3,9 +3,7 @@ import { styled } from "styled-components";
 
 export const WrapperContainerHome = styled.div`
     padding: 0 120px;
-    background: #ececec;
-
-    
+    background: #ececec;   
 `
 
 export const WrapperButton = styled(Button)`

@@ -8,6 +8,10 @@ export const WrapperHeader = styled(Row)`
     justify-content: space-between;
     margin: 0 !important;
     color: #fff;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
 
     .ant-select-selector , .ant-select-selection-search-input {
         height: 40px !important;

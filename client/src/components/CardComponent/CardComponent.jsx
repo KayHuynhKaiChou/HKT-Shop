@@ -3,7 +3,7 @@
 import { Button, Popover, Rate, Tooltip } from 'antd'
 import { AccessProduct, CardCustome, DiscountProduct, HaveSold, InforProduct, NameAccessProduct, NameProduct, PriceDiscountProduct, PriceProduct, YellowStars } from './style';
 import {useNavigate} from 'react-router-dom'
-import {calculatePriceFinal, convertPrice} from '../../utils/utils'
+import {calculatePriceFinal, convertPrice, convertUTF8toUnicode} from '../../utils/utils'
 
 export default function CardComponent(props) {
 
@@ -24,8 +24,14 @@ export default function CardComponent(props) {
     const navigate = useNavigate()
 
     const handleConvertDetailProduct = () => {
+        const typeFormat = convertUTF8toUnicode(type).split(' ').join('-')
+        const nameFormat = convertUTF8toUnicode(name).split(' ').join('-')
         if(countInStock > 0){
-            navigate(`/product-details/${type}/${id}`)
+            navigate(`/product-details/${typeFormat}/${nameFormat}`, { state : {
+                    id,
+                    type
+                }           
+            })
         }
     }
     
