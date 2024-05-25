@@ -111,9 +111,10 @@ export default function HeaderComponent(props) {
     const p = products?.find(product => product.name === value)
     const typeFormat = convertUTF8toUnicode(p.type).split(' ').join('-')
     const nameFormat = convertUTF8toUnicode(p.name).split(' ').join('-')
+    console.log({p})
     navigate(`/product-details/${typeFormat}/${nameFormat}` , { 
       state : {
-        id : p.id,
+        id : p._id,
         type : p.type
       }
     })
@@ -144,7 +145,7 @@ export default function HeaderComponent(props) {
           <ShoppingOutlined style={{fontSize: "28px" , marginRight:"10px"}}/>
           <WrapperTextHeader>HKT Shop</WrapperTextHeader>
           {nameHeader !== 'HKT SHOP' ? (
-              <span className='header-title'>{nameHeader}</span>
+            <span className='header-title'>{nameHeader}</span>
           ) : null}
         </Col>
         {!isHiddenSearch && (
